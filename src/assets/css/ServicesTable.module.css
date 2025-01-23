@@ -1,0 +1,263 @@
+.container {
+  /* padding: 1.5rem; */
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex; /* Flexbox for header */
+  justify-content: space-between; /* Space between items */
+  align-items: center; /* Center items vertically */
+  margin-bottom: 1rem;
+}
+
+.container h2 {
+  /* font-family: "IBM Plex Sans Arabic"; */
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  /* identical to box height */
+
+  color: #1e1e1e;
+  margin-bottom: 1rem;
+}
+
+.filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+.paginationBtn {
+  background-color: transparent !important;
+}
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--primary-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: var(--White, #fff);
+  text-align: right;
+  font-family: "IBM Plex Sans Arabic";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border: none;
+}
+.exportButton {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 24px;
+  gap: 8px;
+
+  background: rgba(25, 110, 184, 0.1);
+  border: 1px solid #196eb8;
+  border-radius: 8px;
+
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height */
+  text-align: right;
+
+  color: var(--primary-color);
+}
+
+.addButton:hover {
+  background-color: var(--button-hover-color);
+}
+
+.tableContainer {
+  width: 100%; /* Full width */
+  /* height: 80vh; */
+  /* max-height: 500px; Limit height for vertical scrolling */
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.table {
+  width: 100%; /* Full width */
+  border-collapse: collapse; /* Collapse borders */
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.75rem;
+  color: #333;
+  font-weight: 400;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+.table th {
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  color: #333;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+}
+.table tr {
+  background: #fff;
+}
+.table tr:nth-child(odd) {
+  background-color: #f9f9f9 ;
+}
+
+.table tr:hover {
+  background-color: #f0f9ff;
+  transition: background-color 0.3s ease;
+}
+
+.actions {
+  display: flex;
+  /* padding-right: 8rem; */
+  gap: 1rem;
+  width: 150px;
+}
+
+.icon {
+  cursor: pointer;
+  color: var(--icon-color);
+  transition: color 0.3s;
+}
+
+.icon:hover {
+  color: var(--primary-color);
+}
+/* Pagination Container */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 0rem;
+}
+
+/* Pagination Buttons */
+.pagination button {
+  background-color: transparent;
+
+  padding: 0.5rem 0.8rem;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Regular/Body 3 - Regular - 20px */
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+
+  /* gray */
+  color: #7a8c9d;
+}
+
+.pagination button:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.pendingStatus {
+  color: var(--Colors-Orange, var(--Colors-Orange, #ff9500));
+  text-align: right;
+  font-family: "IBM Plex Sans Arabic";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  /* width: 4.6875rem; */
+  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 152, 8, 0.08);
+}
+.acceptedStatus {
+  color: #00aeef;
+  text-align: right;
+  font-family: "IBM Plex Sans Arabic";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border-radius: 0.25rem;
+  background: rgba(0, 174, 239, 0.08);
+  display: flex;
+  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+}
+.canceledStatus {
+  color: #ff3b30;
+  text-align: right;
+  font-family: "IBM Plex Sans Arabic";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 59, 48, 0.08);
+}
+/* Active Page Number */
+.pagination .activePage {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.5rem 0.8rem;
+}
+
+/* Disabled Buttons */
+.pagination button:disabled {
+  background-color: #e0e0e0;
+  color: #aaa;
+  border-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .buttons {
+    margin-top: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .table th,
+  .table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}

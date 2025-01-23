@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* src/styles/globals.css */
+body {
+  font-family: "IBM Plex Sans Arabic", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth; /* Smooth scrolling */
+  user-select: none;
+}
+:root {
+  --primary-color: #196EB8;
+  --secondary-color: #f0f5ff;
+  --text-color: #333;
+  --border-color: #e6e6e6;
+  --icon-color: #6c757d;
+  --hover-color: #f8f9fa;
+  --button-color: #0059c7;
+  --button-hover-color: #004db3;
+}
+/* Force background color for NextUI DatePicker elements */
+.custom-input [data-slot="input-wrapper"] {
+  background-color: #fff !important; /* Set the background color to white */
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.noData {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #888;
+  margin-top: 20px;
+}

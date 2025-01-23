@@ -1,0 +1,39 @@
+.modalHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.emoji {
+  font-size: 3rem;
+}
+
+.confirmText {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.deleteButton {
+  background-color: #e53e3e;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.deleteButton:hover {
+  background-color: #c53030;
+}
+
+.cancelButton {
+  background-color: #f0f0f0;
+  color: #999;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.cancelButton:hover {
+  background-color: #e2e2e2;
+}

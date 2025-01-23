@@ -1,0 +1,110 @@
+.modalHeader {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sectionTitle {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.sectionSubtitle {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.inputField,
+.textareaField {
+  margin-bottom: 1rem;
+}
+.hiddenInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.uploadBox {
+  /* border: 2px dashed #ccc; */
+  border-radius: 8px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  background: #f8f9fd;
+  align-items: center;
+  position: relative;
+}
+.uploadBoxTow {
+  /* border: 2px dashed #ccc; */
+  border-radius: 8px;
+  background: #f8f9fd;
+
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.uploadedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  /* identical to box height */
+  text-align: center;
+
+  /* Gray - 2 */
+  color: #a8b1ce;
+}
+
+/* .hiddenInput {
+  display: none;
+} */
+
+.videoUpload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  /* border: 2px dashed #ccc;
+   */
+  background: #f8f9fd;
+
+  border-radius: 8px;
+}
