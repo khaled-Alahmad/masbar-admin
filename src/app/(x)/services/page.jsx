@@ -206,16 +206,12 @@ const ServicesTable = () => {
               objectFit: "cover",
             }}
           />
-          {/* <span>{row.original.name}</span> */}
         </div>
       ),
     },
     {
       header: "Order",
       accessorKey: "sort",
-      // cell: () => {
-      //   return `(+100 )`;
-      // },
     },
     {
       header: "Date Added",
@@ -242,11 +238,22 @@ const ServicesTable = () => {
         );
       },
     },
- 
+
     {
       header: "Action",
       cell: ({ row }) => (
-        <div className={styles.actions}>
+        <div
+          className={styles.actions}
+          style={{
+            display: "flex",
+            gap: "1rem",
+            width: "150px", // تأكد من أن العرض مناسب
+            position: "sticky",
+            right: 0,
+            // background: "#fff", // خلفية ثابتة
+            zIndex: 1, // أولوية العرض
+          }}
+        >
           <Image
             src="/images/icons/edit.svg"
             className={styles.icon}
@@ -267,13 +274,6 @@ const ServicesTable = () => {
             className={styles.icon}
             onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
           />
-
-          {/* <FaTrash
-            className={styles.icon}
-            style={{ cursor: "pointer", color: "red" }}
-          />
-          <FaEllipsisV className={styles.icon} /> */}
-          {/* <FaEye className={styles.icon} /> */}
         </div>
       ),
     },
@@ -297,48 +297,6 @@ const ServicesTable = () => {
       <h2>Services Categories</h2>
       <div className={styles.header}>
         <div className={styles.filters}>
-          {/* <Select
-            label="Main Service"
-            placeholder="Select Service"
-            variant="bordered"
-            className="min-w-[200px]"
-            radius="sm"
-            classNames={{
-              mainWrapper: "bg-white rounded-lg",
-            }}
-            labelPlacement="outside"
-            onChange={(e) =>
-              setFilters({ ...filters, service: e.target.value })
-            }
-          >
-            <SelectItem key="1" value="Service 1">
-              Service 1
-            </SelectItem>
-            <SelectItem key="2" value="Service 2">
-              Service 2
-            </SelectItem>
-          </Select>
-          <Select
-            label="Sub Service"
-            placeholder="Select Sub Service"
-            labelPlacement="outside"
-            className="min-w-[200px]"
-            radius="sm"
-            classNames={{
-              mainWrapper: "bg-white rounded-lg",
-            }}
-            variant="bordered"
-            onChange={(e) =>
-              setFilters({ ...filters, subService: e.target.value })
-            }
-          >
-            <SelectItem key="1" value="Sub Service 1">
-              Sub Service 1
-            </SelectItem>
-            <SelectItem key="2" value="Sub Service 2">
-              Sub Service 2
-            </SelectItem>
-          </Select> */}
           <Input
             label="Search"
             placeholder="Search..."

@@ -82,10 +82,31 @@
 }
 
 .tableContainer {
+  position: relative;
+
   width: 100%; /* Full width */
   /* height: 80vh; */
   /* max-height: 500px; Limit height for vertical scrolling */
   overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* تثبيت العمود الأخير مع خلفية ثابتة */
+.table td:last-child,
+.table th:last-child {
+  position: sticky;
+  right: 0;
+  background-color: #ffffff; /* الخلفية الافتراضية */
+  z-index: 2; /* أولوية العرض */
+}
+
+/* صفوف فردية (odd rows) */
+.table tr:nth-child(odd) td:last-child {
+  background-color: #f9f9f9; /* خلفية الصف الفردي للعمود الأخير */
+}
+
+/* صفوف زوجية (للتأكد من التباين) */
+.table tr:nth-child(even) td:last-child {
+  background-color: #ffffff; /* خلفية الصف الزوجي للعمود الأخير */
 }
 
 .table {
@@ -116,7 +137,7 @@
   background: #fff;
 }
 .table tr:nth-child(odd) {
-  background-color: #f9f9f9 ;
+  background-color: #f9f9f9;
 }
 
 .table tr:hover {
@@ -128,7 +149,7 @@
   display: flex;
   /* padding-right: 8rem; */
   gap: 1rem;
-  width: 150px;
+  /* width: 150px; */
 }
 
 .icon {

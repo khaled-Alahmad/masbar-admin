@@ -108,8 +108,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     >
       {isSidebarOpen ? (
         <>
-          <div className={styles.logo} style={{ height: "4rem" }}>
-            {/* <img src="/logo.svg" alt="Instahando Logo" /> */}
+          <div className={styles.logo}>
+            <img
+              src="/logo.jpg"
+              alt="Instahando Logo"
+              style={{ objectFit: "contain" }}
+            />
           </div>
           <ul className={styles.menu}>
             {menuItems.map((item) => (
@@ -140,8 +144,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         </>
       ) : (
         <>
-          <div className={styles.logo} style={{ height: "4rem" }}>
-            {/* <img src="/logo.svg" alt="Instahando Logo" /> */}
+          <div className={styles.logo}>
+            <img
+              src="/logo.jpg"
+              alt="Instahando Logo"
+              style={{ objectFit: "contain" }}
+            />
           </div>
           <ul className={styles.menu}>
             {/* <li className={styles.icon}>
