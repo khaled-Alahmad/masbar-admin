@@ -3,26 +3,18 @@ import React, { useEffect, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
 import {
-  FaEdit,
-  FaTrash,
-  FaEye,
-  FaEllipsisV,
   FaPlus,
   FaFileExport,
 } from "react-icons/fa";
 import { getData, deleteData } from "@/utils/apiHelper";
 import styles from "@/assets/css/ServicesTable.module.css";
 import {
-  Select,
-  SelectItem,
   Input,
   Button,
   Checkbox,
-  DatePicker,
   Spinner,
   DateRangePicker,
   Image,
@@ -34,7 +26,6 @@ import ArrowRight from "@/assets/icons/ArrowRight";
 import ArrowLeft from "@/assets/icons/ArrowLeft";
 import EditServiceModal from "@/components/service-categories/EditServiceModal";
 import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
-import ServiceRequestDetailsModal from "@/components/requests/ServiceRequestDetailsModal";
 import ServiceDetailsModal from "@/components/service-categories/ServiceDetailsModal";
 import { languageKeys } from "@/utils/lang";
 
