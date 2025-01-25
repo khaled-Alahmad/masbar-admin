@@ -50,7 +50,7 @@
 .logo span {
   font-weight: bold;
   font-size: 1.2rem;
-  color: #196eb8;
+  color: #66BE56;
 }
 
 .menu {
@@ -80,21 +80,21 @@
 
 .menu a:hover {
   background-color: #e6f0ff;
-  color: #196eb8;
-  border-right: 4px solid #196eb8;
+  color: #66BE56;
+  border-right: 4px solid #66BE56;
 }
 .active > a {
-  color: var(--Color, #196eb8);
+  color: var(--Color, #66BE56);
   font-family: "IBM Plex Sans Arabic";
   font-size: 1rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
-  border-right: 2px solid var(--Color, #196eb8);
+  border-right: 2px solid var(--Color, #66BE56);
   background: rgba(25, 110, 184, 0.06);
 }
 .active .icon {
-  fill: #196eb8;
+  fill: #66BE56;
 }
 .icon {
   font-size: 1.2rem;

@@ -63,7 +63,7 @@ const LoginPage = () => {
     return (
         <div className={styles.container}>
             <form className={styles.card}>
-                <h2>Login</h2>
+                {/* <h2>Login</h2> */}
                 <Spacer y={1} />
                 {/* Email Input */}
                 <Input

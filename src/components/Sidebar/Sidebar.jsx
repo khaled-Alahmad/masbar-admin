@@ -1,29 +1,12 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "@/app/Layout.module.css";
-import {
-  FaTachometerAlt,
-  FaThLarge,
-  FaUsersCog,
-  FaUserFriends,
-  FaTools,
-  FaBriefcase,
-  FaMoneyBillWave,
-  FaExchangeAlt,
-  FaFileInvoiceDollar,
-  FaEnvelope,
-  FaQuestionCircle,
-  FaStar,
-  FaBell,
-  FaSignOutAlt,
-  FaArchway,
-  FaBars,
-} from "react-icons/fa";
+import { FaTachometerAlt, FaThLarge, FaSignOutAlt } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Link } from "@nextui-org/react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
