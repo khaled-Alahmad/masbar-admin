@@ -61,12 +61,19 @@ const ServicesTypeTable = () => {
 
   const [filters, setFilters] = useState({
     search: "",
+    sort_order: "asc", // true for ascending, false for descending
     created_at_from: null,
     created_at_to: null,
   });
   const handleDetailsClick = (id) => {
     setSelectedItemId(id);
     setDetailsModalOpen(true);
+  };
+  const toggleSortOrder = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      sort_order: prevFilters.sort_order === "asc" ? "desc" : "asc", // Toggle between asc and desc
+    }));
   };
   const fetchServices = async () => {
     setLoading(true);
@@ -373,6 +380,11 @@ const ServicesTypeTable = () => {
           </Button>
         </div>
         <div className={styles.buttons}>
+          <Button onPress={toggleSortOrder} radius="sm" color="primary">
+            Toggle Sort (
+            {filters.sort_order === "asc" ? "Ascending" : "Descending"})
+          </Button>
+
           <Button
             color="primary"
             radius="sm"

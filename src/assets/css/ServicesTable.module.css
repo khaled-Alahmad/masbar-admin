@@ -96,7 +96,7 @@
   position: sticky;
   right: 0;
   background-color: #ffffff; /* الخلفية الافتراضية */
-  z-index: 2; /* أولوية العرض */
+  z-index: 10; /* أولوية العرض */
 }
 
 /* صفوف فردية (odd rows) */

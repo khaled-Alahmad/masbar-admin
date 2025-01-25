@@ -58,8 +58,16 @@ const ServicesTable = () => {
   const [filters, setFilters] = useState({
     search: "",
     created_at_from: null,
+    sort_order: "asc", // true for ascending, false for descending
+
     created_at_to: null,
   });
+  const toggleSortOrder = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      sort_order: prevFilters.sort_order === "asc" ? "desc" : "asc", // Toggle between asc and desc
+    }));
+  };
   const handleDetailsClick = (id) => {
     setSelectedItemId(id);
     setDetailsModalOpen(true);
@@ -338,6 +346,10 @@ const ServicesTable = () => {
           </Button>
         </div>
         <div className={styles.buttons}>
+          <Button onPress={toggleSortOrder} radius="sm" color="primary">
+            Toggle Sort (
+            {filters.sort_order === "asc" ? "Ascending" : "Descending"})
+          </Button>
           <Button
             color="primary"
             radius="sm"
