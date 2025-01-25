@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "@/app/Layout.module.css";
-import { FaTachometerAlt, FaThLarge, FaSignOutAlt } from "react-icons/fa";
+import { FaTachometerAlt, FaThLarge, FaSignOutAlt, FaTools } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -18,7 +18,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     { name: "Service categories", link: "/services", icon: <FaThLarge /> },
     // { name: "Vendor Management", link: "/vendors", icon: <FaUsersCog /> },
     // { name: "Client Management", link: "/clients", icon: <FaUserFriends /> },
-    // { name: "Service Request", link: "/requests", icon: <FaTools /> },
+    { name: "Service Type", link: "/services-type", icon: <FaTools /> },
     // { name: "Jobs", link: "/jobs", icon: <FaBriefcase /> },
     // {
     //   name: "Revenue and Finance",

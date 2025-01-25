@@ -12,14 +12,17 @@ html {
   user-select: none;
 }
 :root {
-  --primary-color: #66BE56;
+  --primary-color: #66be56;
   --secondary-color: #f0f5ff;
   --text-color: #333;
   --border-color: #e6e6e6;
   --icon-color: #6c757d;
   --hover-color: #f8f9fa;
-  --button-color: #0059c7;
-  --button-hover-color: #004db3;
+  --button-color: #66be56;
+  --button-hover-color: #66be56c4;
+}
+.css-1nmdiq5-menu {
+  z-index: 9999 !important;
 }
 /* Force background color for NextUI DatePicker elements */
 .custom-input [data-slot="input-wrapper"] {
