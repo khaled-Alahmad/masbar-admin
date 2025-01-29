@@ -515,7 +515,11 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
             <>
               {formData.service_attributes.map((item) => (
                 <div key={item.id}>
-                  <div className="grid grid-cols-3 gap-6 mb-4">
+                  <div
+                    className={`grid grid-cols-${
+                      languageKeys.length + 1
+                    } gap-4 mb-2`}
+                  >
                     {languageKeys.map((lang) => (
                       <Input
                         key={`${item.id}-${lang}`}
@@ -556,7 +560,9 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
                         item.values.map((value) => (
                           <div
                             key={value.id}
-                            className="grid grid-cols-3 gap-4 mb-2"
+                            className={`grid grid-cols-${
+                              languageKeys.length + 1
+                            } gap-4 mb-2`}
                           >
                             {languageKeys.map((lang) => (
                               <Input
