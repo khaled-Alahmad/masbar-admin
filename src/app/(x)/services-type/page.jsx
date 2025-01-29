@@ -5,11 +5,8 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import {
-  FaPlus,
-  FaFileExport,
-} from "react-icons/fa";
-import { getData, deleteData } from "@/utils/apiHelper";
+import { FaPlus, FaFileExport } from "react-icons/fa";
+import { getData, deleteData, postData, putData } from "@/utils/apiHelper";
 import styles from "@/assets/css/ServicesTable.module.css";
 import {
   Input,
@@ -121,6 +118,29 @@ const ServicesTypeTable = () => {
       : updatedSelection.add(id);
     setSelectedRows(updatedSelection);
   };
+  const handleEdit = async (rowData) => {
+    try {
+      // Toggle the is_active value
+      const updatedActiveStatus = !rowData.is_active;
+
+      // Update the data on the server
+      const response = await putData(`/admin/service-types/${rowData.id}`, {
+        ...rowData,
+        is_active: updatedActiveStatus,
+      });
+
+      // Show success message if API call is successful
+      if (response.success) {
+        toast.success(response.data.message || "Status updated successfully!");
+        // Optionally, refresh the data or update the local state here
+      } else {
+        toast.error("Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("An error occurred while updating the status.");
+    }
+  };
 
   const exportCheckedRows = () => {
     const rowsToExport = data.filter((row) => selectedRows.has(row.id));
@@ -151,15 +171,7 @@ const ServicesTypeTable = () => {
         </div>
       ),
     },
-    {
-      header: `Description (${lang.toUpperCase()})`,
-      accessorKey: `description.${lang}`, // Access the specific language field
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <span>{row.original.description[lang]}</span>
-        </div>
-      ),
-    },
+
     {
       header: `Job Name (${lang.toUpperCase()})`,
       accessorKey: `job_name.${lang}`, // Access the specific language field
@@ -265,7 +277,7 @@ const ServicesTypeTable = () => {
           size="sm"
           color="primary"
           isSelected={row.original.is_active} // Individual row selection
-          // onChange={() => toggleRowSelection(row.original.id)}
+          onChange={() => handleEdit(row.original)} // Pass the entire row's original data
         />
       ),
     },
@@ -369,8 +381,7 @@ const ServicesTypeTable = () => {
         </div>
         <div className={styles.buttons}>
           <Button onPress={toggleSortOrder} radius="sm" color="primary">
-            Toggle Sort (
-            {filters.sort_order === "asc" ? "Ascending" : "Descending"})
+            {filters.sort_order === "asc" ? "Asc" : "Desc"}
           </Button>
 
           <Button

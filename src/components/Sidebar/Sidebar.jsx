@@ -2,11 +2,17 @@
 import { useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "@/app/Layout.module.css";
-import { FaTachometerAlt, FaThLarge, FaSignOutAlt, FaTools } from "react-icons/fa";
+import {
+  FaTachometerAlt,
+  FaThLarge,
+  FaSignOutAlt,
+  FaTools,
+} from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "@nextui-org/react";
+import Link from "next/link";
+// import { Link } from "@nextui-org/react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
@@ -135,18 +141,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             />
           </div>
           <ul className={styles.menu}>
-            {/* <li className={styles.icon}>
-              <Link
-                href={"#"}
-                className={`${styles.menuItem} ${
-                  isSidebarOpen ? styles.open : ""
-                }`}
-                onClick={toggleSidebar}
-              >
-                <FaBars />
-              </Link>{" "}
-            </li> */}
-
             {menuItems.map((item) => (
               <li
                 key={item.name}

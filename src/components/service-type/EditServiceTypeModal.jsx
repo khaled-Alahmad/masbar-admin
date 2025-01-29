@@ -8,12 +8,13 @@ import {
   Button,
   Input,
   Switch,
+  Divider,
 } from "@nextui-org/react";
 import Select from "react-select";
 
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { getData, putData } from "@/utils/apiHelper";
+import { deleteData, getData, postData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { currentlyLang, languageKeys } from "@/utils/lang";
 
@@ -24,14 +25,17 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     job_name: {},
     online_meeting: true,
     is_active: true,
-    order: "",
     category_id: null,
+    service_attributes: [],
+
+    order: "",
     picture: null,
     existingPicture: null, // Separate field for the existing image URL
   });
+  const [loading, setLoading] = useState(false);
+  const [showValuesOpen, setShowValuesOpen] = useState({});
 
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -68,6 +72,8 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
             order: "",
             category_id: service.category?.id,
             picture: null,
+            service_attributes: service.service_attributes || [],
+            service_attributes_values: service.service_attributes?.values || [],
             existingPicture: service.image || null, // Set existing image URL
           });
         }
@@ -80,21 +86,228 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
 
     if (isOpen) fetchServiceData();
   }, [isOpen, itemId]);
+  // Fetch existing service data
+  useEffect(() => {
+    const fetchServiceData = async () => {
+      setLoading(true);
+      try {
+        const response = await getData(`/admin/service-types/${itemId}`);
+        if (response.success) {
+          setFormData(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to load service data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Handle Input Change for Text Fields
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    if (isOpen) fetchServiceData();
+  }, [isOpen, itemId]);
 
-  // Handle Input Change for Multi-Language Name
-  const handleNameChange = (lang, value, attr) => {
+  // Handle Input Changes
+  const handleInputChange = (lang, value, path) => {
     setFormData((prev) => ({
       ...prev,
-      [attr]: {
-        ...prev[attr],
+      [path]: {
+        ...prev[path],
         [lang]: value,
       },
     }));
+  };
+
+  // Toggle Values Visibility
+  const toggleValuesVisibility = (attributeId) => {
+    setShowValuesOpen((prev) => ({
+      ...prev,
+      [attributeId]: !prev[attributeId],
+    }));
+  };
+
+  const handleAddAttribute = async () => {
+    const newAttribute = {
+      service_type_id: itemId,
+      name: { en: "New Attribute", ar: "خاصية جديدة" }, // Keep as an object
+    };
+
+    try {
+      const response = await postData(
+        "/admin/service-attributes",
+        newAttribute
+      );
+      if (response.success) {
+        setFormData((prev) => ({
+          ...prev,
+          service_attributes: [...prev.service_attributes, response.data],
+        }));
+        // toast.success("Attribute added successfully!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add attribute.");
+    }
+  };
+  const handleEditValue = async (attributeId, valueId, lang, value) => {
+    // Update UI first (Optimistic UI)
+    setFormData((prev) => ({
+      ...prev,
+      service_attributes: prev.service_attributes.map((attr) =>
+        attr.id === attributeId
+          ? {
+              ...attr,
+              values: attr.values.map((val) =>
+                val.id === valueId
+                  ? { ...val, value: { ...val.value, [lang]: value } }
+                  : val
+              ),
+            }
+          : attr
+      ),
+    }));
+
+    // Send API request to update the backend
+    try {
+      const response = await putData(
+        `/admin/service-attribute-values/${valueId}`,
+        {
+          value: {
+            ...formData.service_attributes
+              .find((attr) => attr.id === attributeId)
+              .values.find((val) => val.id === valueId).value,
+            [lang]: value,
+          },
+        }
+      );
+
+      if (response.success) {
+        // toast.success("Value updated successfully!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update value.");
+    }
+  };
+  const handleEditAttribute = async (attributeId, lang, value) => {
+    // Update UI first (Optimistic UI)
+    setFormData((prev) => ({
+      ...prev,
+      service_attributes: prev.service_attributes.map((attr) =>
+        attr.id === attributeId
+          ? { ...attr, name: { ...attr.name, [lang]: value } }
+          : attr
+      ),
+    }));
+
+    // Send API request to update the backend
+    try {
+      const response = await putData(
+        `/admin/service-attributes/${attributeId}`,
+        {
+          name: {
+            ...formData.service_attributes.find(
+              (attr) => attr.id === attributeId
+            ).name,
+            [lang]: value,
+          },
+        }
+      );
+
+      if (response.success) {
+        // toast.success("Attribute updated successfully!");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update attribute."
+      );
+    }
+  };
+
+  // Delete Attribute
+  const handleDeleteAttribute = async (attributeId) => {
+    try {
+      await deleteData(`/admin/service-attributes/${attributeId}`);
+      setFormData((prev) => ({
+        ...prev,
+        service_attributes: prev.service_attributes.filter(
+          (attr) => attr.id !== attributeId
+        ),
+      }));
+      // toast.success("Attribute deleted!");
+    } catch (error) {
+      toast.error("Failed to delete attribute.");
+    }
+  };
+
+  const handleAddValue = async (attributeId) => {
+    const newValue = {
+      service_attribute_id: attributeId,
+      value: { en: "New Value", ar: "قيمة جديدة" }, // Keep as an object
+    };
+    console.log(newValue);
+
+    try {
+      const response = await postData(
+        "/admin/service-attribute-values",
+        newValue
+      );
+      if (response.success) {
+        setFormData((prev) => ({
+          ...prev,
+          service_attributes: prev.service_attributes.map((attr) =>
+            attr.id === attributeId
+              ? { ...attr, values: [...attr.values, response.data] }
+              : attr
+          ),
+        }));
+        // toast.success("Value added successfully!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add value.");
+    }
+  };
+
+  // Delete Value
+  const handleDeleteValue = async (attributeId, valueId) => {
+    try {
+      await deleteData(`/admin/service-attribute-values/${valueId}`);
+      setFormData((prev) => ({
+        ...prev,
+        service_attributes: prev.service_attributes.map((attr) =>
+          attr.id === attributeId
+            ? {
+                ...attr,
+                values: attr.values.filter((val) => val.id !== valueId),
+              }
+            : attr
+        ),
+      }));
+      toast.success("Value deleted!");
+    } catch (error) {
+      toast.error("Failed to delete value.");
+    }
+  };
+
+  // Handle Input Change for Multi-Language Name
+  const handleNameChange = (lang, value, path) => {
+    const keys = path.split("."); // Split the path into keys
+    setFormData((prev) => {
+      const updatedData = { ...prev };
+      let currentLevel = updatedData;
+
+      keys.forEach((key, index) => {
+        if (index === keys.length - 1) {
+          // Set the value on the final key
+          currentLevel[key] = value;
+        } else {
+          // Ensure the intermediate object exists
+          const nextKeyIsArray = !isNaN(keys[index + 1]);
+          if (!currentLevel[key]) {
+            currentLevel[key] = nextKeyIsArray ? [] : {};
+          }
+          currentLevel = currentLevel[key];
+        }
+      });
+
+      return updatedData;
+    });
   };
 
   // Handle Main Image Upload
@@ -108,49 +321,52 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
       }));
     }
   };
-
-  // Submit Updated Data
   const handleSubmit = async () => {
-    const data = new FormData();
+    // Validate attributes and values
+    console.log(formData);
 
-    // Add `name` directly as a JSON object
+    const serviceTypeData = new FormData();
     Object.entries(formData.name).forEach(([lang, value]) => {
-      data.append(`name[${lang}]`, value);
+      serviceTypeData.append(`name[${lang}]`, value);
     });
     Object.entries(formData.description).forEach(([lang, value]) => {
-      data.append(`description[${lang}]`, value);
+      serviceTypeData.append(`description[${lang}]`, value);
     });
     Object.entries(formData.job_name).forEach(([lang, value]) => {
-      data.append(`job_name[${lang}]`, value);
+      serviceTypeData.append(`job_name[${lang}]`, value);
     });
-    data.append("is_active", formData.is_active === true ? 1 : 0);
-    data.append("online_meeting", formData.online_meeting === true ? 1 : 0);
-    data.append("category_id", formData.category_id);
+    serviceTypeData.append("is_active", formData.is_active ? 1 : 0);
+    serviceTypeData.append("online_meeting", formData.online_meeting ? 1 : 0);
+    serviceTypeData.append(
+      "category_id",
+      formData.category_id || formData.category?.id
+    );
 
-    if (formData.picture) data.append("image", formData.picture);
-
-    console.log("Data to be sent:");
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}:`, value);
+    if (formData.picture) {
+      serviceTypeData.append("image", formData.picture);
     }
 
     try {
-      const response = await putData(
+      // Step 1: Submit service type data
+      const serviceTypeResponse = await putData(
         `/admin/service-types/${itemId}`,
-        data
+        serviceTypeData
       );
-      if (response.success) {
-        toast.success("Service updated successfully!");
-        refreshData();
-        onClose();
-      } else {
-        toast.error("Failed to update service.");
+
+      if (!serviceTypeResponse.success) {
+        toast.error("Failed to update service type.");
+        return;
       }
+
+      toast.success("Service updated successfully!");
+      refreshData();
+      onClose();
     } catch (error) {
       console.error("API Error:", error);
-      toast.error("Something went wrong.");
+      toast.error("An error occurred while updating the service.");
     }
   };
+
   if (!services || loading) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -167,7 +383,7 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="5xl"
+      size="full"
       backdrop="blur"
       scrollBehavior="inside"
     >
@@ -192,7 +408,7 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
                     value: service.id,
                     label: service.name[currentlyLang],
                   }))
-                  .find((option) => option.value === formData.category_id)}
+                  .find((option) => option.value == formData.category_id)}
                 onChange={(selectedOption) =>
                   setFormData({
                     ...formData,
@@ -293,6 +509,114 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
             </small> */}
           </div>
           {/* Main Image Upload */}
+          <Divider className="my-4" />
+          <h1>Service Attributes</h1>
+          {formData.service_attributes.length > 0 ? (
+            <>
+              {formData.service_attributes.map((item) => (
+                <div key={item.id}>
+                  <div className="grid grid-cols-3 gap-6 mb-4">
+                    {languageKeys.map((lang) => (
+                      <Input
+                        key={`${item.id}-${lang}`}
+                        label={`Attribute Name (${lang.toUpperCase()})`}
+                        placeholder={`Enter name in ${lang.toUpperCase()}`}
+                        variant="bordered"
+                        labelPlacement="outside"
+                        value={item.name[lang] || ""}
+                        onChange={(e) =>
+                          handleEditAttribute(item.id, lang, e.target.value)
+                        }
+                      />
+                    ))}
+                    <div className="flex gap-4 justify-stretch align-bottom items-end">
+                      <Button
+                        color="danger"
+                        variant="shadow"
+                        onPress={() => handleDeleteAttribute(item.id)}
+                      >
+                        Delete Attribute
+                      </Button>
+                      <Button
+                        color="primary"
+                        variant="shadow"
+                        onPress={() => toggleValuesVisibility(item.id)}
+                      >
+                        {showValuesOpen[item.id]
+                          ? "Hide Values"
+                          : "Show Values"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {showValuesOpen[item.id] && (
+                    <div>
+                      <h2 className="mb-4">Values:</h2>
+                      {item.values && item.values.length > 0 ? (
+                        item.values.map((value) => (
+                          <div
+                            key={value.id}
+                            className="grid grid-cols-3 gap-4 mb-2"
+                          >
+                            {languageKeys.map((lang) => (
+                              <Input
+                                key={`${value.id}-${lang}`}
+                                label={`Value (${lang.toUpperCase()})`}
+                                placeholder={`Enter value in ${lang.toUpperCase()}`}
+                                variant="bordered"
+                                labelPlacement="outside"
+                                value={value.value[lang] || ""}
+                                onChange={(e) =>
+                                  handleEditValue(
+                                    item.id,
+                                    value.id,
+                                    lang,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            ))}
+                            <div className="flex gap-4 justify-stretch align-bottom items-end">
+                              <Button
+                                color="danger"
+                                variant="shadow"
+                                onPress={() =>
+                                  handleDeleteValue(item.id, value.id)
+                                }
+                              >
+                                Delete Value
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <>
+                          <p className="my-2"> not exist values</p>
+                        </>
+                      )}
+                      <Button
+                        onPress={() => handleAddValue(item.id)}
+                        color="success"
+                        className={styles.addAttr}
+                      >
+                        Add Value
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </>
+          ) : (
+            <p>No attributes available.</p>
+          )}
+
+          <button
+            onClick={handleAddAttribute}
+            color="success"
+            className={styles.addAttr}
+          >
+            Add Attribute
+          </button>
           <div>
             <p>Main Service Photo</p>
             <div className={styles.uploadBox}>

@@ -44,6 +44,7 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
       </Modal>
     );
   }
+  console.log("Service:", services);
 
   const {
     name,
@@ -52,7 +53,7 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
     image,
     is_active,
     category,
-    serviceAttributes,
+    service_attributes,
     online_meeting,
   } = services;
 
@@ -133,18 +134,22 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
           {/* Service Attributes */}
           <div className="mt-6">
             <h4 className="mb-3">Service Attributes</h4>
-            {serviceAttributes.length === 0 ? <> Not Exist Any Attributes</> :serviceAttributes.map((attr) => (
-              <div key={attr.id} className="mb-4">
-                <h5>{attr.name[languageKeys[0]]}</h5>
-                <ul>
-                  {attr.values.map((val) => (
-                    <li key={val.id}>
-                      <strong>{val.value[languageKeys[0]]}</strong>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {service_attributes.length === 0 ? (
+              <> Not Exist Any Attributes</>
+            ) : (
+              service_attributes.map((attr) => (
+                <div key={attr.id} className="mb-4">
+                  <h5>{attr.name[languageKeys[0]]}</h5>
+                  <ul>
+                    {attr.values.map((val) => (
+                      <li key={val.id}>
+                        <strong>{val.value[languageKeys[0]]}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Image */}

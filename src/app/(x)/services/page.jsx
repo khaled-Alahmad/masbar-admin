@@ -5,10 +5,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import {
-  FaPlus,
-  FaFileExport,
-} from "react-icons/fa";
+import { FaPlus, FaFileExport } from "react-icons/fa";
 import { getData, deleteData } from "@/utils/apiHelper";
 import styles from "@/assets/css/ServicesTable.module.css";
 import {
@@ -338,8 +335,7 @@ const ServicesTable = () => {
         </div>
         <div className={styles.buttons}>
           <Button onPress={toggleSortOrder} radius="sm" color="primary">
-            Toggle Sort (
-            {filters.sort_order === "asc" ? "Ascending" : "Descending"})
+            {filters.sort_order === "asc" ? "Asc" : "Desc"}
           </Button>
           <Button
             color="primary"

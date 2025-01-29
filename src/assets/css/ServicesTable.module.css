@@ -63,7 +63,7 @@
   gap: 8px;
 
   background: rgba(25, 110, 184, 0.1);
-  border: 1px solid #66BE56;
+  border: 1px solid #66be56;
   border-radius: 8px;
 
   font-family: "IBM Plex Sans Arabic";
@@ -87,27 +87,20 @@
   width: 100%; /* Full width */
   /* height: 80vh; */
   /* max-height: 500px; Limit height for vertical scrolling */
-  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow: auto; /* لتمكين التمرير عند الحاجة */
 }
 
 /* تثبيت العمود الأخير مع خلفية ثابتة */
 .table td:last-child,
 .table th:last-child {
-  position: sticky;
-  right: 0;
-  background-color: #ffffff; /* الخلفية الافتراضية */
-  z-index: 10; /* أولوية العرض */
-}
-
-/* صفوف فردية (odd rows) */
-.table tr:nth-child(odd) td:last-child {
-  background-color: #f9f9f9; /* خلفية الصف الفردي للعمود الأخير */
+  position: sticky; /* تثبيت العمود الأخير */
+  right: 0; /* إبقائه على الطرف الأيمن */
+  /* background-color: #fff; لون الخلفية لضمان رؤية النص */
+  z-index: 10; /* ضمان ظهوره فوق بقية العناصر */
+  text-align: center;
 }
 
 /* صفوف زوجية (للتأكد من التباين) */
-.table tr:nth-child(even) td:last-child {
-  background-color: #ffffff; /* خلفية الصف الزوجي للعمود الأخير */
-}
 
 .table {
   width: 100%; /* Full width */
@@ -148,10 +141,15 @@
 .actions {
   display: flex;
   /* padding-right: 8rem; */
-  gap: 1rem;
+  padding: 0.5rem;
+  background-color: #ffffff;
+  border-radius: 40px;
+  justify-content: space-evenly;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف حول العنصر */
+
+  /* gap: 1rem; */
   /* width: 150px; */
 }
-
 .icon {
   cursor: pointer;
   color: var(--icon-color);

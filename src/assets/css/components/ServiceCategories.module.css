@@ -7,7 +7,16 @@
   margin-top: 1rem;
   font-weight: 600;
 }
-
+.addAttr {
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 16px;
+  width: 150px;
+  padding: 0.5rem 1rem;
+}
+.addAttr:hover {
+  background-color: var(--button-hover-color);
+}
 .sectionSubtitle {
   color: #888;
   font-size: 0.9rem;
