@@ -510,11 +510,14 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
           </div>
           {/* Main Image Upload */}
           <Divider className="my-4" />
-          <h1>Service Attributes</h1>
+          <h1 className="font-bold">Service Attributes</h1>
           {formData.service_attributes.length > 0 ? (
             <>
               {formData.service_attributes.map((item) => (
-                <div key={item.id}>
+                <div
+                  key={item.id}
+                  className="border-gray-500 border rounded-lg p-4"
+                >
                   <div
                     className={`grid grid-cols-${
                       languageKeys.length + 1
@@ -555,7 +558,9 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
 
                   {showValuesOpen[item.id] && (
                     <div>
-                      <h2 className="mb-4">Values:</h2>
+                      <Divider className="my-4" />
+
+                      <h2 className="mb-4 font-bold">Values:</h2>
                       {item.values && item.values.length > 0 ? (
                         item.values.map((value) => (
                           <div
