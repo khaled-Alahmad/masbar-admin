@@ -43,6 +43,7 @@ const ServicesTypeTable = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const [loadingFilter, setLoadingFilter] = useState(false);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -61,7 +62,12 @@ const ServicesTypeTable = () => {
     }));
   };
   const fetchServices = async () => {
-    setLoading(true);
+    if (data.length > 0) {
+      setLoadingFilter(true);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     try {
       const response = await getData("/admin/service-types", {
         page: page,
@@ -74,6 +80,7 @@ const ServicesTypeTable = () => {
       console.error("Failed to fetch services:", error);
     } finally {
       setLoading(false);
+      setLoadingFilter(false);
     }
   };
 
@@ -336,7 +343,18 @@ const ServicesTypeTable = () => {
   };
   return (
     <div className={styles.container}>
-      <h2>Services Categories</h2>
+      <h2>
+        Services Type
+        {loadingFilter && (
+          // <tr>
+          //   <td colSpan={7}>
+          // <div className={"loading al"}>
+          <Spinner size="sm" color="primary" className="ms-2" />
+          // </div>
+          //   </td>
+          // </tr>
+        )}
+      </h2>
       <div className={styles.header}>
         <div className={styles.filters}>
           <Input
@@ -405,7 +423,7 @@ const ServicesTypeTable = () => {
       </div>
 
       {/* Loading State */}
-      {loading ? (
+      {/* {loading ? (
         <div className={"loading"}>
           <Spinner size="lg" label="Loading data..." color="primary" />
         </div>
@@ -414,25 +432,47 @@ const ServicesTypeTable = () => {
         <div className={"noData"}>
           <p>No services found!</p>
         </div>
-      ) : (
-        // Table
-        <>
-          <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
+      ) : ( */}
+      {/* // Table */}
+      <>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            {loading ? (
+              <tr>
+                <td colSpan={10}>
+                  <div className={"loading al"}>
+                    <Spinner
+                      size="lg"
+                      label="Loading data..."
+                      color="primary"
+                    />
+                  </div>
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              // No Data State
+              <tr>
+                <td className="hover:bg-transparent" colSpan={10}>
+                  <div className={"noData"}>
+                    <p>No data found!</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
               <tbody>
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
@@ -447,39 +487,43 @@ const ServicesTypeTable = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
-          <div className={styles.pagination}>
-            <Button
-              className={styles.paginationBtn}
-              isDisabled={page <= 1}
-              onClick={() => setPage((prev) => prev - 1)}
-            >
-              {/* <img src="./images/icons/arrow_left.svg" className={styles.icon} /> */}
-              <ArrowLeft className={styles.icon} />
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                className={page === i + 1 ? styles.activePage : ""}
-                onClick={() => setPage(i + 1)}
+            )}
+          </table>
+        </div>
+        {data.length > 0 && (
+          <>
+            <div className={styles.pagination}>
+              <Button
+                className={styles.paginationBtn}
+                isDisabled={page <= 1}
+                onClick={() => setPage((prev) => prev - 1)}
               >
-                {i + 1}
-              </button>
-            ))}
+                {/* <img src="./images/icons/arrow_left.svg" className={styles.icon} /> */}
+                <ArrowLeft className={styles.icon} />
+              </Button>
 
-            <Button
-              className={styles.paginationBtn}
-              isDisabled={page >= totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              {/* <img src="./images/icons/arrow_right.svg" className={styles.icon} /> */}
-              <ArrowRight className={styles.icon} />
-            </Button>
-          </div>
-        </>
-      )}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  className={page === i + 1 ? styles.activePage : ""}
+                  onClick={() => setPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <Button
+                className={styles.paginationBtn}
+                isDisabled={page >= totalPages}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                {/* <img src="./images/icons/arrow_right.svg" className={styles.icon} /> */}
+                <ArrowRight className={styles.icon} />
+              </Button>
+            </div>
+          </>
+        )}
+      </>
 
       <AddServiceTypeModal
         refreshData={fetchServices}

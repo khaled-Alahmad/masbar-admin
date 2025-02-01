@@ -30,6 +30,8 @@ const ServicesTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingFilter, setLoadingFilter] = useState(false);
+
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,7 +63,12 @@ const ServicesTable = () => {
     setDetailsModalOpen(true);
   };
   const fetchServices = async () => {
-    setLoading(true);
+    if (data.length > 0) {
+      setLoadingFilter(true);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     try {
       const response = await getData("/admin/service-categories", {
         page: page,
@@ -74,6 +81,7 @@ const ServicesTable = () => {
       console.error("Failed to fetch services:", error);
     } finally {
       setLoading(false);
+      setLoadingFilter(false);
     }
   };
 
@@ -290,7 +298,18 @@ const ServicesTable = () => {
   };
   return (
     <div className={styles.container}>
-      <h2>Services Categories</h2>
+      <h2>
+        Services Categories
+        {loadingFilter && (
+          // <tr>
+          //   <td colSpan={7}>
+          // <div className={"loading al"}>
+          <Spinner size="sm" color="primary" className="ms-2" />
+          // </div>
+          //   </td>
+          // </tr>
+        )}
+      </h2>
       <div className={styles.header}>
         <div className={styles.filters}>
           <Input
@@ -357,35 +376,47 @@ const ServicesTable = () => {
         </div>
       </div>
 
-      {/* Loading State */}
-      {loading ? (
-        <div className={"loading"}>
-          <Spinner size="lg" label="Loading data..." color="primary" />
-        </div>
-      ) : data.length === 0 ? (
-        // No Data State
-        <div className={"noData"}>
-          <p>No services found!</p>
-        </div>
-      ) : (
-        // Table
-        <>
-          <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
+      {/* // Table */}
+      <>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            {/* Loading State */}
+            {loading ? (
+              <tr>
+                <td colSpan={7}>
+                  <div className={"loading al"}>
+                    <Spinner
+                      size="lg"
+                      label="Loading data..."
+                      color="primary"
+                    />
+                  </div>
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              // No Data State
+              <tr>
+                <td colSpan={7}>
+                  <div className={"noData"}>
+                    <p>No data found!</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
               <tbody>
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
@@ -400,39 +431,43 @@ const ServicesTable = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
-          <div className={styles.pagination}>
-            <Button
-              className={styles.paginationBtn}
-              isDisabled={page <= 1}
-              onClick={() => setPage((prev) => prev - 1)}
-            >
-              {/* <img src="./images/icons/arrow_left.svg" className={styles.icon} /> */}
-              <ArrowLeft className={styles.icon} />
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                className={page === i + 1 ? styles.activePage : ""}
-                onClick={() => setPage(i + 1)}
+            )}
+          </table>
+        </div>
+        {data.length > 0 && (
+          <>
+            <div className={styles.pagination}>
+              <Button
+                className={styles.paginationBtn}
+                isDisabled={page <= 1}
+                onClick={() => setPage((prev) => prev - 1)}
               >
-                {i + 1}
-              </button>
-            ))}
+                {/* <img src="./images/icons/arrow_left.svg" className={styles.icon} /> */}
+                <ArrowLeft className={styles.icon} />
+              </Button>
 
-            <Button
-              className={styles.paginationBtn}
-              isDisabled={page >= totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              {/* <img src="./images/icons/arrow_right.svg" className={styles.icon} /> */}
-              <ArrowRight className={styles.icon} />
-            </Button>
-          </div>
-        </>
-      )}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  className={page === i + 1 ? styles.activePage : ""}
+                  onClick={() => setPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <Button
+                className={styles.paginationBtn}
+                isDisabled={page >= totalPages}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                {/* <img src="./images/icons/arrow_right.svg" className={styles.icon} /> */}
+                <ArrowRight className={styles.icon} />
+              </Button>
+            </div>
+          </>
+        )}
+      </>
 
       <AddServiceModal
         refreshData={fetchServices}
