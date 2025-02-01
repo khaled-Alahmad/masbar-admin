@@ -7,6 +7,7 @@ import {
   FaThLarge,
   FaSignOutAlt,
   FaTools,
+  FaBriefcase,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
@@ -25,7 +26,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     // { name: "Vendor Management", link: "/vendors", icon: <FaUsersCog /> },
     // { name: "Client Management", link: "/clients", icon: <FaUserFriends /> },
     { name: "Service Type", link: "/services-type", icon: <FaTools /> },
-    // { name: "Jobs", link: "/jobs", icon: <FaBriefcase /> },
+    { name: "Service Request", link: "/service-requests", icon: <FaBriefcase /> },
     // {
     //   name: "Revenue and Finance",
     //   link: "/finance",
