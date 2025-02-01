@@ -26,8 +26,15 @@ import { languageKeys } from "@/utils/lang";
 import AddServiceTypeModal from "@/components/service-type/AddServiceTypeModal";
 import EditServiceTypeModal from "@/components/service-type/EditServiceTypeModal";
 import ServiceTypeDetailsModal from "@/components/service-type/ServiceTypeDetailsModal";
+import AddClientModal from "@/components/clients/AddClientModal";
+import EditClientModal from "@/components/clients/EditClientModal";
+import ClientDetailsModal from "@/components/clients/ClientDetailsModal";
+import { useRouter } from "next/navigation";
+import AddProviderModal from "@/components/providers/AddProviderModal";
+import EditProviderModal from "@/components/providers/EditProviderModal";
+import ProviderDetailsModal from "@/components/providers/ProviderDetailsModal";
 
-const ServicesTypeTable = () => {
+const ProvidersTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,6 +51,7 @@ const ServicesTypeTable = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [loadingFilter, setLoadingFilter] = useState(false);
+  const router = useRouter();
 
   const [filters, setFilters] = useState({
     search: "",
@@ -69,7 +77,7 @@ const ServicesTypeTable = () => {
       setLoading(true);
     }
     try {
-      const response = await getData("/admin/service-types", {
+      const response = await getData("/admin/providers", {
         page: page,
         limit: limit,
         ...filters,
@@ -109,7 +117,7 @@ const ServicesTypeTable = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      await deleteData(`/admin/service-types/${selectedItemId}`);
+      await deleteData(`/admin/providers/${selectedItemId}`);
       setIsDeleteModalOpen(false);
       toast.success("Deleted service successful!");
       fetchServices();
@@ -131,7 +139,7 @@ const ServicesTypeTable = () => {
       const updatedActiveStatus = !rowData.is_active;
 
       // Update the data on the server
-      const response = await putData(`/admin/service-types/${rowData.id}`, {
+      const response = await putData(`/admin/providers/${rowData.id}`, {
         ...rowData,
         is_active: updatedActiveStatus,
       });
@@ -168,28 +176,30 @@ const ServicesTypeTable = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
-  const columnsForLang = languageKeys.flatMap((lang) => [
-    {
-      header: `Name (${lang.toUpperCase()})`,
-      accessorKey: `name.${lang}`, // Access the specific language field
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <span>{row.original.name[lang]}</span>
-        </div>
-      ),
-    },
+  // const columnsForLang = languageKeys.flatMap((lang) => [
+  //   {
+  //     header: `Name (${lang.toUpperCase()})`,
+  //     accessorKey: `name.${lang}`, // Access the specific language field
+  //     cell: ({ row }) => (
+  //       <div className="flex items-center">
+  //         <span>{row.original.name[lang]}</span>
+  //       </div>
+  //     ),
+  //   },
 
-    {
-      header: `Job Name (${lang.toUpperCase()})`,
-      accessorKey: `job_name.${lang}`, // Access the specific language field
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <span>{row.original.job_name[lang]}</span>
-        </div>
-      ),
-    },
-  ]);
-
+  //   {
+  //     header: `Job Name (${lang.toUpperCase()})`,
+  //     accessorKey: `job_name.${lang}`, // Access the specific language field
+  //     cell: ({ row }) => (
+  //       <div className="flex items-center">
+  //         <span>{row.original.job_name[lang]}</span>
+  //       </div>
+  //     ),
+  //   },
+  // ]);
+  const handleRequestShow = (id) => {
+    router.push(`/service-requests?id=${id}`);
+  };
   const columns = [
     {
       header: ({ table }) => (
@@ -219,36 +229,52 @@ const ServicesTypeTable = () => {
         />
       ),
     },
-    ...columnsForLang,
+    // ...columnsForLang,
     {
-      header: "Service Type Image",
-      accessorKey: "picture",
+      header: "Provider Name",
       cell: ({ row }) => (
         <div className="flex items-center">
           <img
-            src={row.original.image}
-            alt={row.original.name}
+            src={row.original.user?.avatar || "https://placehold.co/400"}
+            alt={row.original?.user?.first_name}
             style={{
               height: "2rem",
               width: "2rem",
               marginRight: "0.5rem",
               objectFit: "cover",
+              borderRadius: "50%",
             }}
           />
+          <p>
+            {row.original?.user?.first_name +
+              " " +
+              row.original?.user?.last_name}
+          </p>
         </div>
       ),
     },
     {
-      header: "Online",
-      accessorKey: "online_meeting",
-      cell: ({ row }) => (
-        <Switch
-          size="sm"
-          color="primary"
-          isSelected={row.original.online_meeting} // Individual row selection
-          // onChange={() => toggleRowSelection(row.original.id)}
-        />
-      ),
+      header: "Email",
+      accessorKey: "user.email",
+    },
+    {
+      header: "Phone",
+      cell: ({ row }) => {
+        return ` ${row.original?.user?.phone_number}`;
+      },
+    },
+    {
+      header: "Status",
+      accessorKey: "user.status",
+      cell: ({ row }) => {
+        if (row.original.user.status == "PENDING") {
+          return <span className={styles.pendingStatus}>Pending</span>;
+        } else if (row.original.user.status == "ACTIVE") {
+          return <span className={styles.acceptedStatus}>Active</span>;
+        } else if (row.original.user.status == "BANNED") {
+          return <span className={styles.canceledStatus}>Banned</span>;
+        }
+      },
     },
 
     {
@@ -276,18 +302,18 @@ const ServicesTypeTable = () => {
         );
       },
     },
-    {
-      header: "Active",
-      accessorKey: "is_active",
-      cell: ({ row }) => (
-        <Switch
-          size="sm"
-          color="primary"
-          isSelected={row.original.is_active} // Individual row selection
-          onChange={() => handleEdit(row.original)} // Pass the entire row's original data
-        />
-      ),
-    },
+    // {
+    //   header: "Active",
+    //   accessorKey: "is_active",
+    //   cell: ({ row }) => (
+    //     <Switch
+    //       size="sm"
+    //       color="primary"
+    //       isSelected={row.original.is_active} // Individual row selection
+    //       onChange={() => handleEdit(row.original)} // Pass the entire row's original data
+    //     />
+    //   ),
+    // },
     {
       header: "Action",
       cell: ({ row }) => (
@@ -313,11 +339,17 @@ const ServicesTypeTable = () => {
             onClick={() => handleDeleteClick(row.original?.id)}
             className={styles.icon}
           />
+
           {/* <img
             src="./images/icons/export.svg"
             className={styles.icon}
             onClick={() => exportSingleRow(row.original)}
           /> */}
+          <Image
+            src="/images/icons/menu.svg"
+            onClick={() => handleRequestShow(row.original?.id)}
+            className={styles.icon}
+          />
           <Image
             src="/images/icons/eye.svg"
             className={styles.icon}
@@ -344,7 +376,7 @@ const ServicesTypeTable = () => {
   return (
     <div className={styles.container}>
       <h2>
-        Services Type
+        Providers
         {loadingFilter && (
           // <tr>
           //   <td colSpan={7}>
@@ -409,7 +441,7 @@ const ServicesTypeTable = () => {
             className={styles.addButton}
             startContent={<FaPlus />}
           >
-            Add Service
+            Add Provider
           </Button>
           <Button
             radius="sm"
@@ -458,7 +490,7 @@ const ServicesTypeTable = () => {
                     <div className={"loading al"}>
                       <Spinner
                         size="lg"
-                        //  label="Loading data..."
+                        // label="Loading data..."
                         color="primary"
                       />
                     </div>
@@ -469,7 +501,7 @@ const ServicesTypeTable = () => {
               // No Data State
               <tbody>
                 <tr className="not-hover">
-                  <td className="hover:bg-transparent " colSpan={10}>
+                  <td className="hover:bg-transparent" colSpan={10}>
                     <div className={"noData"}>
                       <p>No data found!</p>
                     </div>
@@ -529,24 +561,24 @@ const ServicesTypeTable = () => {
         )}
       </>
 
-      <AddServiceTypeModal
+      <AddProviderModal
         refreshData={fetchServices}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      <EditServiceTypeModal
+      <EditProviderModal
         refreshData={fetchServices}
         isOpen={isAddModalOpen}
         itemId={selectedItemId}
         onClose={() => setAddModalOpen(false)}
       />
       <ConfirmDeleteModal
-        text={"Are You Sure delete This Service ?"}
+        text={"Are You Sure delete This Client?"}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={handleConfirmDelete}
       />
-      <ServiceTypeDetailsModal
+      <ProviderDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
         itemId={selectedItemId}
@@ -556,4 +588,4 @@ const ServicesTypeTable = () => {
   );
 };
 
-export default ServicesTypeTable;
+export default ProvidersTable;

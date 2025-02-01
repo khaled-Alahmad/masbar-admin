@@ -28,6 +28,7 @@ import { languageKeys } from "@/utils/lang";
 import AddServiceTypeModal from "@/components/service-type/AddServiceTypeModal";
 import EditServiceTypeModal from "@/components/service-type/EditServiceTypeModal";
 import ServiceTypeDetailsModal from "@/components/service-type/ServiceTypeDetailsModal";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ServicesRequestTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -47,15 +48,24 @@ const ServicesRequestTable = () => {
   const [limit] = useState(10);
   const [loadingFilter, setLoadingFilter] = useState(false);
   const [clients, setClients] = useState([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const id = searchParams.get("id");
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const response = await getData(`/admin/clients`);
         console.log(response);
-        setClients(response.data || []);
+        const clientOptions = response.data.map((item) => ({
+          label: `${item.user.first_name} ${item.user.last_name}`,
+          value: String(item.id), // Ensure value is a string
+        }));
 
-        // setServices(response.data.data || []);
+        // Add the "All" option at the beginning
+        const allOption = { label: "All", value: null };
+        setClients([allOption, ...clientOptions]); // Prepend the "All" option
       } catch (error) {
         console.error("Error fetching services:", error);
       }
@@ -65,12 +75,13 @@ const ServicesRequestTable = () => {
   }, []);
 
   const [filters, setFilters] = useState({
-    client_id: null,
+    client_id: id || null,
     search: "",
     sort_order: "asc", // true for ascending, false for descending
     created_at_from: null,
     created_at_to: null,
   });
+
   const handleDetailsClick = (id) => {
     setSelectedItemId(id);
     setDetailsModalOpen(true);
@@ -145,29 +156,6 @@ const ServicesRequestTable = () => {
       : updatedSelection.add(id);
     setSelectedRows(updatedSelection);
   };
-  const handleEdit = async (rowData) => {
-    try {
-      // Toggle the is_active value
-      const updatedActiveStatus = !rowData.is_active;
-
-      // Update the data on the server
-      const response = await putData(`/admin/service-requests/${rowData.id}`, {
-        ...rowData,
-        is_active: updatedActiveStatus,
-      });
-
-      // Show success message if API call is successful
-      if (response.success) {
-        toast.success(response.data.message || "Status updated successfully!");
-        // Optionally, refresh the data or update the local state here
-      } else {
-        toast.error("Failed to update status.");
-      }
-    } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("An error occurred while updating the status.");
-    }
-  };
 
   const exportCheckedRows = () => {
     const rowsToExport = data.filter((row) => selectedRows.has(row.id));
@@ -178,37 +166,12 @@ const ServicesRequestTable = () => {
     }
   };
 
-  const exportSingleRow = (row) => {
-    exportToExcel([row], "single_row");
-  };
-
   const exportToExcel = (rows, fileName) => {
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
-  const columnsForLang = languageKeys.flatMap((lang) => [
-    {
-      header: `Name (${lang.toUpperCase()})`,
-      accessorKey: `name.${lang}`, // Access the specific language field
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <span>{row.original.name[lang]}</span>
-        </div>
-      ),
-    },
-
-    {
-      header: `Job Name (${lang.toUpperCase()})`,
-      accessorKey: `job_name.${lang}`, // Access the specific language field
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <span>{row.original.job_name[lang]}</span>
-        </div>
-      ),
-    },
-  ]);
 
   const columns = [
     {
@@ -292,56 +255,40 @@ const ServicesRequestTable = () => {
         );
       },
     },
-    // {
-    //   header: "Active",
-    //   accessorKey: "is_active",
-    //   cell: ({ row }) => (
-    //     <Switch
-    //       size="sm"
-    //       color="primary"
-    //       isSelected={row.original.is_active} // Individual row selection
-    //       onChange={() => handleEdit(row.original)} // Pass the entire row's original data
-    //     />
-    //   ),
-    // },
-    // {
-    //   header: "Action",
-    //   cell: ({ row }) => (
-    //     <div
-    //       className={styles.actions}
-    //       style={{
-    //         display: "flex",
-    //         gap: "1rem",
-    //         width: "150px", // تأكد من أن العرض مناسب
-    //         position: "sticky",
-    //         right: 0,
-    //         // background: "#fff", // خلفية ثابتة
-    //         zIndex: 1, // أولوية العرض
-    //       }}
-    //     >
-    //       <Image
-    //         src="/images/icons/edit.svg"
-    //         className={styles.icon}
-    //         onClick={() => handleAddClick(row.original?.id)}
-    //       />
-    //       <Image
-    //         src="/images/icons/trash.svg"
-    //         onClick={() => handleDeleteClick(row.original?.id)}
-    //         className={styles.icon}
-    //       />
-    //       {/* <img
-    //         src="./images/icons/export.svg"
-    //         className={styles.icon}
-    //         onClick={() => exportSingleRow(row.original)}
-    //       /> */}
-    //       <Image
-    //         src="/images/icons/eye.svg"
-    //         className={styles.icon}
-    //         onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
-    //       />
-    //     </div>
-    //   ),
-    // },
+
+    {
+      header: "Action",
+      cell: ({ row }) => (
+        <div
+          className={styles.actions}
+          style={{
+            display: "flex",
+            gap: "1rem",
+            width: "150px", // تأكد من أن العرض مناسب
+            position: "sticky",
+            right: 0,
+            // background: "#fff", // خلفية ثابتة
+            zIndex: 1, // أولوية العرض
+          }}
+        >
+          <Image
+            src="/images/icons/edit.svg"
+            className={styles.icon}
+            onClick={() => handleAddClick(row.original?.id)}
+          />
+          <Image
+            src="/images/icons/trash.svg"
+            onClick={() => handleDeleteClick(row.original?.id)}
+            className={styles.icon}
+          />
+          <Image
+            src="/images/icons/eye.svg"
+            className={styles.icon}
+            onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
+          />
+        </div>
+      ),
+    },
   ];
 
   const table = useReactTable({
@@ -351,12 +298,37 @@ const ServicesRequestTable = () => {
   });
   const clearDateRange = () => {
     setFilters({
-      ...filters,
+      // ...filters,
       search: "",
+      client_id: null,
       created_at_from: null,
       created_at_to: null,
     });
   };
+  useEffect(() => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      client_id: id,
+    }));
+  }, [id]);
+
+  const handleSelectChange = (selectedOption) => {
+    const newClientId = selectedOption ? selectedOption.value : null;
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      client_id: newClientId,
+    }));
+
+    // Update URL (remove `id` if cleared)
+    if (newClientId) {
+      router.push(`/service-requests?id=${newClientId}`);
+    } else {
+      router.push(`/service-requests`);
+    }
+  };
+  console.log(clients);
+
   return (
     <div className={styles.container}>
       <h2>
@@ -386,22 +358,17 @@ const ServicesRequestTable = () => {
           <div>
             <label className=" text-sm">Client Name</label>
             <Select
-              label="Service Category"
-              placeholder="Select Service"
+              // menuIsOpen
+              label="Client Name"
+              placeholder="Select Client"
+              classNamePrefix="react-select"
               className="min-w-[200px] custom-input mt-1"
               variant="bordered"
-              options={clients.map((service) => ({
-                value: service.id,
-                label: service.user?.first_name + " " + service.user?.last_name,
-              }))}
-              // fullWidth
+              theme={"primary"}
+              value={clients.filter((option) => option.value == id)}
+              options={clients}
               labelPlacement="outside"
-              onChange={(selectedOption) =>
-                setFilters({
-                  ...filters,
-                  client_id: selectedOption.value,
-                })
-              }
+              onChange={handleSelectChange}
             />
           </div>
           <DateRangePicker
@@ -489,26 +456,30 @@ const ServicesRequestTable = () => {
               ))}
             </thead>
             {loading ? (
-              <tr>
-                <td colSpan={10}>
-                  <div className={"loading al"}>
-                    <Spinner
-                      size="lg"
-                      label="Loading data..."
-                      color="primary"
-                    />
-                  </div>
-                </td>
-              </tr>
+              <tbody>
+                <tr className="not-hover">
+                  <td colSpan={10}>
+                    <div className={"loading al"}>
+                      <Spinner
+                        size="lg"
+                        // label="Loading data..."
+                        color="primary"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             ) : data.length === 0 ? (
               // No Data State
-              <tr>
-                <td className="hover:bg-transparent" colSpan={10}>
-                  <div className={"noData"}>
-                    <p>No data found!</p>
-                  </div>
-                </td>
-              </tr>
+              <tbody>
+                <tr className="not-hover">
+                  <td className="hover:bg-transparent" colSpan={10}>
+                    <div className={"noData"}>
+                      <p>No data found!</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             ) : (
               <tbody>
                 {table.getRowModel().rows.map((row) => (

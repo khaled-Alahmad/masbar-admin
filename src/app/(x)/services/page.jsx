@@ -396,26 +396,30 @@ const ServicesTable = () => {
             </thead>
             {/* Loading State */}
             {loading ? (
-              <tr>
-                <td colSpan={7}>
-                  <div className={"loading al"}>
-                    <Spinner
-                      size="lg"
-                      label="Loading data..."
-                      color="primary"
-                    />
-                  </div>
-                </td>
-              </tr>
+              <tbody>
+                <tr className="not-hover">
+                  <td colSpan={7}>
+                    <div className={"loading al"}>
+                      <Spinner
+                        size="lg"
+                        // label="Loading data..."
+                        color="primary"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             ) : data.length === 0 ? (
               // No Data State
-              <tr>
-                <td colSpan={7}>
-                  <div className={"noData"}>
-                    <p>No data found!</p>
-                  </div>
-                </td>
-              </tr>
+              <tbody>
+                <tr className="not-hover">
+                  <td colSpan={7}>
+                    <div className={"noData"}>
+                      <p>No data found!</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             ) : (
               <tbody>
                 {table.getRowModel().rows.map((row) => (

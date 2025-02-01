@@ -8,6 +8,9 @@ import {
   FaSignOutAlt,
   FaTools,
   FaBriefcase,
+  FaStar,
+  FaUserFriends,
+  FaUsersCog,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
@@ -23,7 +26,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const menuItems = [
     { name: "Dashboard", link: "/", icon: <FaTachometerAlt /> },
     { name: "Service categories", link: "/services", icon: <FaThLarge /> },
-    // { name: "Vendor Management", link: "/vendors", icon: <FaUsersCog /> },
     // { name: "Client Management", link: "/clients", icon: <FaUserFriends /> },
     { name: "Service Type", link: "/services-type", icon: <FaTools /> },
     { name: "Service Request", link: "/service-requests", icon: <FaBriefcase /> },
@@ -40,7 +42,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     // },
     // { name: "Proposals", link: "/proposals", icon: <FaArchway /> },
     // { name: "FQA", link: "/fqa", icon: <FaQuestionCircle /> },
-    // { name: "Customer Reviews", link: "/reviews", icon: <FaStar /> },
+    { name: "Clients", link: "/clients", icon: <FaUserFriends /> },
+    { name: "Providers", link: "/providers", icon: <FaUsersCog /> },
+
     // { name: "Notification", link: "/notifications", icon: <FaBell /> },
     { name: "Logout", link: "#", icon: <FaSignOutAlt /> },
   ];

@@ -8,3 +8,10 @@ export const estimatedHours = [
     '12-14',
     '14-16'
 ];
+export const phoneCode=[
+    {code:"+1",name:"United States"},
+    {code:"+971",name:"United Arab Emirates"}
+]
+export const statusClients = [
+    'ACTIVE','BANNED','PENDING'
+];

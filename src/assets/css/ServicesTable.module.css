@@ -105,7 +105,7 @@
 .table {
   width: 100%; /* Full width */
   border-collapse: collapse; /* Collapse borders */
-  min-height: 70vh;
+  /* min-height: 70vh; */
 }
 .table th,
 .table td {
@@ -129,6 +129,7 @@
 }
 .table tr {
   background: #fff;
+  /* height: 1rem !important; */
 }
 .table tr:nth-child(odd) {
   background-color: #f9f9f9;
@@ -200,10 +201,12 @@
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
+  /* border-radius: 50%; */
+  padding: 0.25rem;
   line-height: normal;
   display: flex;
   /* width: 4.6875rem; */
-  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  /* padding: var(--sds-size-space-100) var(--sds-size-space-150); */
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
@@ -217,11 +220,14 @@
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
+  padding: 0.25rem;
+
+
   line-height: normal;
   border-radius: 0.25rem;
   background: rgba(0, 174, 239, 0.08);
   display: flex;
-  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  /* padding: var(--sds-size-space-100) var(--sds-size-space-150); */
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
@@ -235,7 +241,10 @@
   font-weight: 400;
   line-height: normal;
   display: flex;
-  padding: var(--sds-size-space-100) var(--sds-size-space-150);
+  /* padding: var(--sds-size-space-100) var(--sds-size-space-150); */
+  padding: 0.25rem;
+
+
   justify-content: center;
   align-items: center;
   gap: 0.625rem;

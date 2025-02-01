@@ -38,6 +38,25 @@ html {
 .noData {
   text-align: center;
   font-size: 1.1rem;
+
+  display: flex;
+
+  height: 55vh;
+  align-items: center;
+  justify-content: center;
   color: #888;
   /* margin-top: 20px; */
+}
+.not-hover:hover {
+  background-color: unset !important;
+}
+.css-t3ipsp-control {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 1px var(--primary-color) !important;
+}
+.css-tr4s17-option {
+  background-color: var(--primary-color) !important;
+}
+.css-d7l1ni-option {
+  background-color: var(--hover-color) !important;
 }
