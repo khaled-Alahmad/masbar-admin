@@ -29,6 +29,7 @@ import AddServiceTypeModal from "@/components/service-type/AddServiceTypeModal";
 import EditServiceTypeModal from "@/components/service-type/EditServiceTypeModal";
 import ServiceTypeDetailsModal from "@/components/service-type/ServiceTypeDetailsModal";
 import { useRouter, useSearchParams } from "next/navigation";
+import ServiceRequestDetailsModal from "@/components/service-requests/ServiceRequestDetailsModal";
 
 const ServicesRequestTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -211,7 +212,7 @@ const ServicesRequestTable = () => {
       },
     },
     {
-      header: "Vendor Name",
+      header: "Provider Name",
       // accessorKey: "online_meeting",
       cell: ({ row }) => {
         return `${
@@ -224,12 +225,57 @@ const ServicesRequestTable = () => {
     {
       header: "Status",
       accessorKey: "status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <>
+            {status === "ACCEPTED" ? (
+              <>
+                {" "}
+                <span className={"bg-orange-500 text-white rounded-lg p-1"}>
+                  {status.toLowerCase()}
+                </span>
+              </>
+            ) : status === "SEARCHING" ? (
+              <>
+                {" "}
+                <span className={"bg-sky-500 text-white rounded-lg p-1"}>
+                  {status.toLowerCase()}
+                </span>
+              </>
+            ) : status === "CANCELLED" ? (
+              <>
+                {" "}
+                <span className={"bg-red-500 text-white rounded-lg p-1"}>
+                  {status.toLowerCase()}
+                </span>
+              </>
+            ) : status === "FINISHED" ? (
+              <>
+                {" "}
+                <span className={"bg-green-500 text-white rounded-lg p-1"}>
+                  {status.toLowerCase()}
+                </span>
+              </>
+            ) : (
+              <></> || "N/A"
+            )}
+          </>
+        );
+      },
     },
     {
       header: "Address",
       accessorKey: "address",
-    },
+      cell: ({ getValue }) => {
+        const address = getValue() || "";
+        const words = address.split(" ");
 
+        return words.length > 10
+          ? words.slice(0, 10).join(" ") + " ..."
+          : address;
+      },
+    },
     {
       header: "Date Added",
       accessorKey: "created_at",
@@ -271,11 +317,11 @@ const ServicesRequestTable = () => {
             zIndex: 1, // أولوية العرض
           }}
         >
-          <Image
+          {/* <Image
             src="/images/icons/edit.svg"
             className={styles.icon}
             onClick={() => handleAddClick(row.original?.id)}
-          />
+          /> */}
           <Image
             src="/images/icons/trash.svg"
             onClick={() => handleDeleteClick(row.original?.id)}
@@ -406,7 +452,7 @@ const ServicesRequestTable = () => {
             {filters.sort_order === "asc" ? "Asc" : "Desc"}
           </Button>
 
-          <Button
+          {/* <Button
             color="primary"
             radius="sm"
             onClick={() => setIsModalOpen(true)}
@@ -414,7 +460,7 @@ const ServicesRequestTable = () => {
             startContent={<FaPlus />}
           >
             Add Service
-          </Button>
+          </Button> */}
           <Button
             radius="sm"
             className={styles.exportButton}
@@ -533,11 +579,6 @@ const ServicesRequestTable = () => {
         )}
       </>
 
-      <AddServiceTypeModal
-        refreshData={fetchServices}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
       <EditServiceTypeModal
         refreshData={fetchServices}
         isOpen={isAddModalOpen}
@@ -545,12 +586,12 @@ const ServicesRequestTable = () => {
         onClose={() => setAddModalOpen(false)}
       />
       <ConfirmDeleteModal
-        text={"Are You Sure delete This Service ?"}
+        text={"Are You Sure delete This Service Request?"}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={handleConfirmDelete}
       />
-      <ServiceTypeDetailsModal
+      <ServiceRequestDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
         itemId={selectedItemId}

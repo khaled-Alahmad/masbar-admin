@@ -9,6 +9,7 @@ import {
   ModalFooter,
   Button,
   Badge,
+  Divider,
 } from "@nextui-org/react";
 import styles from "@/assets/css/components/ServiceRequestDetails.module.css";
 import { getData } from "@/utils/apiHelper";
@@ -30,7 +31,11 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
       }
     };
 
-    if (isOpen) fetchServiceData();
+    if (isOpen) {
+      fetchServiceData();
+    } else {
+      setServices(null); // Reset services when modal is closed
+    }
   }, [isOpen, itemId]);
 
   if (!services) {
@@ -60,7 +65,10 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setServices(null); // Ensure services are reset on close
+        onClose(); // Call the provided onClose function
+      }}
       size="5xl"
       backdrop="blur"
       scrollBehavior="inside"
@@ -71,7 +79,7 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
         </ModalHeader>
         <ModalBody>
           {/* Name, Description, and Job Name */}
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             {languageKeys.map((lang) => (
               <div key={lang} className={styles.details}>
                 <div className="flex justify-between">
@@ -93,26 +101,35 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
             <div className={styles.details}>
               <div className="flex justify-between">
                 <strong>Is Active:</strong>
-                <span>
-                  <Badge color={is_active ? "success" : "error"}>
-                    {is_active ? "Active" : "Inactive"}
-                  </Badge>
+                <span
+                  className={
+                    is_active
+                      ? "bg-primary rounded-lg text-white p-1"
+                      : "bg-red-300 rounded-lg text-white p-1"
+                  }
+                >
+                  {is_active ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex justify-between">
                 <strong>Online Meeting:</strong>
-                <span>
-                  <Badge color={online_meeting ? "primary" : "error"}>
-                    {online_meeting ? "Enabled" : "Disabled"}
-                  </Badge>
+                <span
+                  className={
+                    online_meeting
+                      ? "bg-primary rounded-lg text-white p-1"
+                      : "bg-red-400 rounded-lg text-white p-1"
+                  }
+                >
+                  {online_meeting ? "Enabled" : "Disabled"}
                 </span>
               </div>
             </div>
           </div>
           {/* Category */}
-          <div className="mt-6">
-            <h4 className="mb-3">Category</h4>
-            <div className="flex justify-between">
+          <Divider />
+          <div className="">
+            <h3 className="font-bold">Category</h3>
+            <div className="flex justify-between items-center">
               {languageKeys.map((lang) => (
                 <div key={lang}>
                   <strong>{`Category Name (${lang.toUpperCase()})`}: </strong>
@@ -130,31 +147,73 @@ const ServiceTypeDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
               </div>
             </div>
           </div>
+          <Divider />
 
           {/* Service Attributes */}
-          <div className="mt-6">
-            <h4 className="mb-3">Service Attributes</h4>
+          <div className="">
+            <h4 className="font-bold mb-4">Service Attributes</h4>
             {service_attributes.length === 0 ? (
-              <> Not Exist Any Attributes</>
+              <>
+                <p> Not Exist Any Attributes</p>
+              </>
             ) : (
-              service_attributes.map((attr) => (
-                <div key={attr.id} className="mb-4">
-                  <h5>{attr.name[languageKeys[0]]}</h5>
-                  <ul>
-                    {attr.values.map((val) => (
-                      <li key={val.id}>
-                        <strong>{val.value[languageKeys[0]]}</strong>
-                      </li>
-                    ))}
-                  </ul>
+              service_attributes.length > 0 && (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-gray-200">
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Attribute
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Values
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {service_attributes
+                        .filter((attr) => attr.values.length > 0)
+                        .map((attr) => (
+                          <tr key={attr.id} className="border-b">
+                            {/* Attribute Name */}
+                            <td className="border border-gray-300 px-4 py-2">
+                              {attr.name[languageKeys[0]]}
+                            </td>
+
+                            {/* Attribute Values */}
+                            <td className="border border-gray-300 px-4 py-2">
+                              {attr.values.length > 0 ? (
+                                <ul>
+                                  {attr.values.map((val) => (
+                                    <li
+                                      key={val.id}
+                                      className="inline-block mr-2"
+                                    >
+                                      <strong>
+                                        {val.value[languageKeys[0]]}
+                                      </strong>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <span className="text-gray-400">
+                                  No values available
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))
+              )
             )}
           </div>
+          <Divider />
 
           {/* Image */}
           <div>
-            <h4>Image</h4>
+            <h4 className="font-bold">Image</h4>
             <div className={styles.mediaBox}>
               <Image
                 src={image}

@@ -30,7 +30,11 @@ const ServiceDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
       }
     };
 
-    if (isOpen) fetchServiceData();
+    if (isOpen) {
+      fetchServiceData();
+    } else {
+      setServices(null); // Reset services when modal is closed
+    }
   }, [isOpen, itemId]);
 
   if (!services) {
@@ -50,7 +54,10 @@ const ServiceDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setServices(null); // Ensure services are reset on close
+        onClose(); // Call the provided onClose function
+      }}
       size="lg"
       backdrop="blur"
       scrollBehavior="inside"

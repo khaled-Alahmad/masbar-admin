@@ -30,7 +30,11 @@ const ProviderDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
       }
     };
 
-    if (isOpen) fetchServiceData();
+    if (isOpen) {
+      fetchServiceData();
+    } else {
+      setServices(null); // Reset services when modal is closed
+    }
   }, [isOpen, itemId]);
 
   if (!services) {
@@ -50,7 +54,10 @@ const ProviderDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setServices(null); // Ensure services are reset on close
+        onClose(); // Call the provided onClose function
+      }}
       size="lg"
       backdrop="blur"
       scrollBehavior="inside"
@@ -74,7 +81,18 @@ const ProviderDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
               <strong>Gender:</strong> <span>{user.gender}</span>
             </div>
             <div className="flex justify-between">
-              <strong>Status:</strong> <span>{user.status}</span>
+              <strong>Status:</strong>{" "}
+              <span
+                className={
+                  user.status === "ACTIVE"
+                    ? "bg-green-300 text-white rounded-lg p-1"
+                    : user.status === "PENDING"
+                    ? "bg-orange-300 text-white rounded-lg p-1"
+                    : "bg-red-300 text-white rounded-lg p-1"
+                }
+              >
+                {user.status}
+              </span>
             </div>
             <div className="flex justify-between">
               <strong>Created At:</strong>{" "}
