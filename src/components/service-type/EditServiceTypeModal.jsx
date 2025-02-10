@@ -17,9 +17,12 @@ import styles from "@/assets/css/components/ServiceCategories.module.css";
 import { deleteData, getData, postData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { currentlyLang, languageKeys } from "@/utils/lang";
+import AddAddAttributeModal from "./AddAddAttributeModal";
+import AddAddAttributeValueModal from "./AddAddAttributeModal";
 
 const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [formData, setFormData] = useState({
+    id: null,
     name: {},
     description: {},
     job_name: {},
@@ -34,6 +37,9 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
   });
   const [loading, setLoading] = useState(false);
   const [showValuesOpen, setShowValuesOpen] = useState({});
+  const [addAttribute, setAddAttribute] = useState(false);
+  const [addAttributeValue, setAddAttributeValue] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState(null);
 
   const [services, setServices] = useState([]);
 
@@ -55,8 +61,14 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
 
   // Fetch existing data for the selected service
   useEffect(() => {
+    // if (!isOpen || addAttribute) return;
+
     const fetchServiceData = async () => {
-      setLoading(true);
+      if (isOpen || addAttribute || addAttributeValue) {
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
       try {
         const response = await getData(`/admin/service-types/${itemId}`);
         if (response.success) {
@@ -64,6 +76,7 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
           console.log(service);
 
           setFormData({
+            id: service.id,
             name: service.name || {},
             description: service.description || {},
             job_name: service.job_name || {},
@@ -85,25 +98,29 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     };
 
     if (isOpen) fetchServiceData();
-  }, [isOpen, itemId]);
+  }, [isOpen, itemId, addAttribute, addAttributeValue]);
   // Fetch existing service data
-  useEffect(() => {
-    const fetchServiceData = async () => {
-      setLoading(true);
-      try {
-        const response = await getData(`/admin/service-types/${itemId}`);
-        if (response.success) {
-          setFormData(response.data);
-        }
-      } catch (error) {
-        console.error("Failed to load service data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchServiceData = async () => {
+  //     if (formData.id != null) {
+  //       setLoading(false);
+  //     } else {
+  //       setLoading(true);
+  //     }
+  //     try {
+  //       const response = await getData(`/admin/service-types/${itemId}`);
+  //       if (response.success) {
+  //         setFormData(response.data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to load service data:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    if (isOpen) fetchServiceData();
-  }, [isOpen, itemId]);
+  //   if (isOpen) fetchServiceData();
+  // }, [isOpen, itemId]);
 
   // Handle Input Changes
   const handleInputChange = (lang, value, path) => {
@@ -124,28 +141,6 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     }));
   };
 
-  const handleAddAttribute = async () => {
-    const newAttribute = {
-      service_type_id: itemId,
-      name: { en: "New Attribute", ar: "خاصية جديدة" }, // Keep as an object
-    };
-
-    try {
-      const response = await postData(
-        "/admin/service-attributes",
-        newAttribute
-      );
-      if (response.success) {
-        setFormData((prev) => ({
-          ...prev,
-          service_attributes: [...prev.service_attributes, response.data],
-        }));
-        // toast.success("Attribute added successfully!");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add attribute.");
-    }
-  };
   const handleEditValue = async (attributeId, valueId, lang, value) => {
     // Update UI first (Optimistic UI)
     setFormData((prev) => ({
@@ -230,38 +225,15 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
           (attr) => attr.id !== attributeId
         ),
       }));
-      // toast.success("Attribute deleted!");
+      toast.success("Attribute deleted!");
     } catch (error) {
       toast.error("Failed to delete attribute.");
     }
   };
 
   const handleAddValue = async (attributeId) => {
-    const newValue = {
-      service_attribute_id: attributeId,
-      value: { en: "New Value", ar: "قيمة جديدة" }, // Keep as an object
-    };
-    console.log(newValue);
-
-    try {
-      const response = await postData(
-        "/admin/service-attribute-values",
-        newValue
-      );
-      if (response.success) {
-        setFormData((prev) => ({
-          ...prev,
-          service_attributes: prev.service_attributes.map((attr) =>
-            attr.id === attributeId
-              ? { ...attr, values: [...attr.values, response.data] }
-              : attr
-          ),
-        }));
-        // toast.success("Value added successfully!");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add value.");
-    }
+    setSelectedAttribute(attributeId);
+    setAddAttributeValue(true);
   };
 
   // Delete Value
@@ -367,7 +339,7 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     }
   };
 
-  if (!services || loading) {
+  if (loading) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
@@ -622,7 +594,7 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
           )}
 
           <button
-            onClick={handleAddAttribute}
+            onClick={() => setAddAttribute(true)}
             color="success"
             className={styles.addAttr}
           >
@@ -694,6 +666,18 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
             Save Changes
           </Button>
         </ModalFooter>
+        <AddAddAttributeModal
+          itemId={formData.id}
+          refreshData={refreshData}
+          isOpen={addAttribute}
+          onClose={() => setAddAttribute(false)}
+        />
+        <AddAddAttributeValueModal
+          itemId={selectedAttribute}
+          refreshData={refreshData}
+          isOpen={addAttributeValue}
+          onClose={() => setAddAttributeValue(false)}
+        />
       </ModalContent>
     </Modal>
   );

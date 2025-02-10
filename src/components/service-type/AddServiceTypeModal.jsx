@@ -143,7 +143,7 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
           Add Service Type
         </ModalHeader>
         <ModalBody>
-          <div className="grid grid-cols-3 gap-6">
+          <div className={`grid grid-cols-${languageKeys.length + 1} gap-6`}>
             <div>
               <label className="mb-2">Service Category</label>
               <Select
