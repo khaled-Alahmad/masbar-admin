@@ -11,6 +11,7 @@ import {
   FaStar,
   FaUserFriends,
   FaUsersCog,
+  FaQuestionCircle,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
@@ -28,7 +29,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     { name: "Service categories", link: "/services", icon: <FaThLarge /> },
     // { name: "Client Management", link: "/clients", icon: <FaUserFriends /> },
     { name: "Service Type", link: "/services-type", icon: <FaTools /> },
-    { name: "Service Request", link: "/service-requests", icon: <FaBriefcase /> },
+    {
+      name: "Service Request",
+      link: "/service-requests",
+      icon: <FaBriefcase />,
+    },
     // {
     //   name: "Revenue and Finance",
     //   link: "/finance",
@@ -41,7 +46,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //   icon: <FaFileInvoiceDollar />,
     // },
     // { name: "Proposals", link: "/proposals", icon: <FaArchway /> },
-    // { name: "FQA", link: "/fqa", icon: <FaQuestionCircle /> },
+    { name: "Ads", link: "/ads", icon: <FaQuestionCircle /> },
     { name: "Clients", link: "/clients", icon: <FaUserFriends /> },
     { name: "Providers", link: "/providers", icon: <FaUsersCog /> },
 
