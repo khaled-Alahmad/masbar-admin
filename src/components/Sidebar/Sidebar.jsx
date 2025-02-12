@@ -12,6 +12,7 @@ import {
   FaUserFriends,
   FaUsersCog,
   FaQuestionCircle,
+  FaArchway,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
@@ -45,7 +46,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //   link: "/billing",
     //   icon: <FaFileInvoiceDollar />,
     // },
-    // { name: "Proposals", link: "/proposals", icon: <FaArchway /> },
+    { name: "Service Request Reviews", link: "/service-request-reviews", icon: <FaArchway /> },
     { name: "Ads", link: "/ads", icon: <FaQuestionCircle /> },
     { name: "Clients", link: "/clients", icon: <FaUserFriends /> },
     { name: "Providers", link: "/providers", icon: <FaUsersCog /> },

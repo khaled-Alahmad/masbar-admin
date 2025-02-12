@@ -63,7 +63,7 @@ const ProviderDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
       scrollBehavior="inside"
     >
       <ModalContent>
-        <ModalHeader className={styles.modalHeader}>View Service</ModalHeader>
+        <ModalHeader className={styles.modalHeader}>View Provider</ModalHeader>
         <ModalBody>
           {/* Details Section */}
           <div className={styles.details}>
