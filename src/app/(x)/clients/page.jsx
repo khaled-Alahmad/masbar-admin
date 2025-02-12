@@ -16,6 +16,10 @@ import {
   DateRangePicker,
   Image,
   Switch,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
@@ -30,6 +34,7 @@ import AddClientModal from "@/components/clients/AddClientModal";
 import EditClientModal from "@/components/clients/EditClientModal";
 import ClientDetailsModal from "@/components/clients/ClientDetailsModal";
 import { useRouter } from "next/navigation";
+import { CiMenuKebab } from "react-icons/ci";
 
 const ClientsTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -197,6 +202,9 @@ const ClientsTable = () => {
   const handleRequestShow = (id) => {
     router.push(`/service-requests?id=${id}`);
   };
+  const handleRequestShowT = (id) => {
+    router.push(`/service-request-reviews?client_id=${id}`);
+  };
   const columns = [
     {
       header: ({ table }) => (
@@ -342,16 +350,40 @@ const ClientsTable = () => {
             className={styles.icon}
             onClick={() => exportSingleRow(row.original)}
           /> */}
-          <Image
+          {/* <Image
             src="/images/icons/menu.svg"
             onClick={() => handleRequestShow(row.original?.id)}
             className={styles.icon}
-          />
+          /> */}
           <Image
             src="/images/icons/eye.svg"
             className={styles.icon}
             onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
           />
+          <Dropdown>
+            <DropdownTrigger>
+              <span className={styles.icon}>
+                <CiMenuKebab />
+              </span>
+            </DropdownTrigger>
+            <DropdownMenu
+            // aria-label="Action event example"
+            // onAction={(key) => alert(key)}
+            >
+              <DropdownItem
+                key="new"
+                onPress={() => handleRequestShow(row.original?.id)}
+              >
+                Service Request
+              </DropdownItem>
+              <DropdownItem
+                key="copy"
+                onPress={() => handleRequestShowT(row.original?.id)}
+              >
+                Service Review
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       ),
     },

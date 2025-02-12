@@ -5,6 +5,8 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { CiMenuKebab } from "react-icons/ci";
+
 import { FaPlus, FaFileExport } from "react-icons/fa";
 import { getData, deleteData, postData, putData } from "@/utils/apiHelper";
 import styles from "@/assets/css/ServicesTable.module.css";
@@ -16,6 +18,10 @@ import {
   DateRangePicker,
   Image,
   Switch,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
@@ -200,6 +206,9 @@ const ProvidersTable = () => {
   const handleRequestShow = (id) => {
     router.push(`/service-requests?id=${id}`);
   };
+  const handleRequestShowT = (id) => {
+    router.push(`/service-request-reviews?provider_id=${id}`);
+  };
   const columns = [
     {
       header: ({ table }) => (
@@ -345,16 +354,36 @@ const ProvidersTable = () => {
             className={styles.icon}
             onClick={() => exportSingleRow(row.original)}
           /> */}
-          <Image
-            src="/images/icons/menu.svg"
-            onClick={() => handleRequestShow(row.original?.id)}
-            className={styles.icon}
-          />
+
           <Image
             src="/images/icons/eye.svg"
             className={styles.icon}
             onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
           />
+          <Dropdown>
+            <DropdownTrigger>
+              <span className={styles.icon}>
+                <CiMenuKebab />
+              </span>
+            </DropdownTrigger>
+            <DropdownMenu
+            // aria-label="Action event example"
+            // onAction={(key) => alert(key)}
+            >
+              <DropdownItem
+                key="new"
+                onPress={() => handleRequestShow(row.original?.id)}
+              >
+                Service Request
+              </DropdownItem>
+              <DropdownItem
+                key="copy"
+                onPress={() => handleRequestShowT(row.original?.id)}
+              >
+                Service Review
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       ),
     },

@@ -414,11 +414,11 @@ const ServiceRequestReviews = () => {
             zIndex: 1, // أولوية العرض
           }}
         >
-          <Image
+          {/* <Image
             src="/images/icons/edit.svg"
             className={styles.icon}
             onClick={() => handleAddClick(row.original?.id)}
-          />
+          /> */}
           <Image
             src="/images/icons/trash.svg"
             onClick={() => handleDeleteClick(row.original?.id)}
