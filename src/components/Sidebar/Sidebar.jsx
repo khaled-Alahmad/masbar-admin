@@ -13,6 +13,7 @@ import {
   FaUsersCog,
   FaQuestionCircle,
   FaArchway,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
@@ -41,12 +42,16 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //   icon: <FaMoneyBillWave />,
     // },
     // { name: "Transaction", link: "/transaction", icon: <FaExchangeAlt /> },
-    // {
-    //   name: "Billing management",
-    //   link: "/billing",
-    //   icon: <FaFileInvoiceDollar />,
-    // },
-    { name: "Service Request Reviews", link: "/service-request-reviews", icon: <FaArchway /> },
+    {
+      name: "Invoices",
+      link: "/invoices",
+      icon: <FaFileInvoiceDollar />,
+    },
+    {
+      name: "Service Request Reviews",
+      link: "/service-request-reviews",
+      icon: <FaArchway />,
+    },
     { name: "Ads", link: "/ads", icon: <FaQuestionCircle /> },
     { name: "Clients", link: "/clients", icon: <FaUserFriends /> },
     { name: "Providers", link: "/providers", icon: <FaUsersCog /> },
