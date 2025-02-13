@@ -34,6 +34,15 @@ html {
   align-items: center;
   height: 200px;
 }
+.text-strong {
+  color: var(--Gray---1, #6a6e83);
+  font-family: IBM Plex Sans Arabic;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  /* display: block; */
+}
 
 .noData {
   text-align: center;
