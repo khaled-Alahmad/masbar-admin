@@ -14,11 +14,13 @@ import {
   FaQuestionCircle,
   FaArchway,
   FaFileInvoiceDollar,
+  FaExchangeAlt,
 } from "react-icons/fa";
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { CiSettings } from "react-icons/ci";
 // import { Link } from "@nextui-org/react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
@@ -41,7 +43,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //   link: "/finance",
     //   icon: <FaMoneyBillWave />,
     // },
-    // { name: "Transaction", link: "/transaction", icon: <FaExchangeAlt /> },
+    { name: "Free Services", link: "/free-services", icon: <FaExchangeAlt /> },
     {
       name: "Invoices",
       link: "/invoices",
@@ -56,7 +58,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     { name: "Clients", link: "/clients", icon: <FaUserFriends /> },
     { name: "Providers", link: "/providers", icon: <FaUsersCog /> },
 
-    // { name: "Notification", link: "/notifications", icon: <FaBell /> },
+    { name: "Settings", link: "/settings", icon: <CiSettings /> },
     { name: "Logout", link: "#", icon: <FaSignOutAlt /> },
   ];
 
