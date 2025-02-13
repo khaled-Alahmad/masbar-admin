@@ -18,13 +18,17 @@ import { FaUpload, FaTrashAlt, FaPlus } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
 import { deleteData, getData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
-import { languageKeys } from "@/utils/lang";
+import { currentlyLang, languageKeys } from "@/utils/lang";
 import { phoneCode, statusClients } from "@/data/data";
 import StarRating from "../ui/StarRating";
 import EditDocumentModal from "./EditDocumentModal";
 import AddDocumentModal from "./AddDocumentModal";
 import AddReviewModal from "./AddReviewModal";
 import EditReviewModal from "./EditReviewModal";
+import AddProviderServiceModal from "./AddProviderServiceModal";
+import EditProviderServiceModal from "./EditProviderServiceModal";
+import AddProviderServicePricesModal from "./AddProviderServicePricesModal";
+import EditProviderServicePricesModal from "./EditProviderServicePricesModal";
 
 const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [formData, setFormData] = useState({
@@ -48,12 +52,29 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [editDocument, setEditDocument] = useState(false);
   const [addDocument, setAddDocument] = useState(false);
   const [addReview, setAddReview] = useState(false);
+  const [addProviderService, setAddProviderService] = useState(false);
+  const [editProviderService, setEditProviderService] = useState(false);
+
+  const [addProviderServicePrice, setAddProviderServicePrice] = useState(false);
+  const [editProviderServicePrice, setEditProviderServicePrice] =
+    useState(false);
+
   const [editReview, setEditReview] = useState(false);
 
   // Fetch existing data for the selected service
   useEffect(() => {
     const fetchServiceData = async () => {
-      if (isOpen || editDocument || addDocument || addReview || editReview) {
+      if (
+        isOpen ||
+        editDocument ||
+        addDocument ||
+        addReview ||
+        editReview ||
+        addProviderService ||
+        editProviderService ||
+        addProviderServicePrice ||
+        editProviderServicePrice
+      ) {
         setLoading(false);
       } else {
         setLoading(true);
@@ -85,7 +106,18 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
     };
 
     if (isOpen) fetchServiceData();
-  }, [isOpen, itemId, editDocument, addDocument, addReview, editReview]);
+  }, [
+    isOpen,
+    itemId,
+    editDocument,
+    addDocument,
+    addReview,
+    editReview,
+    addProviderService,
+    editProviderService,
+    addProviderServicePrice,
+    editProviderServicePrice,
+  ]);
 
   // Handle Input Change for Text Fields
   const handleInputChange = (field, value) => {
@@ -123,6 +155,42 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
       toast.error("Failed to delete attribute.");
     }
   };
+  const handleDeleteProvider = async (attributeId) => {
+    try {
+      await deleteData(`/admin/provider-services/${attributeId}`);
+      setFormData((prev) => ({
+        ...prev,
+        provider_services: prev.provider_services.filter(
+          (attr) => attr.id !== attributeId
+        ),
+      }));
+      toast.success("item deleted!");
+    } catch (error) {
+      toast.error("Failed to delete attribute.");
+    }
+  };
+  const handleDeleteProviderPrice = async (attributeId) => {
+    try {
+      await deleteData(`/admin/provider-service-prices/${attributeId}`);
+
+      setFormData((prev) => ({
+        ...prev,
+        provider_services: prev.provider_services.map((service) => ({
+          ...service,
+          providerServicePrices: service.providerServicePrices
+            ? service.providerServicePrices.filter(
+                (attr) => attr.id !== attributeId
+              )
+            : [],
+        })),
+      }));
+
+      toast.success("Item deleted!");
+    } catch (error) {
+      toast.error("Failed to delete attribute.");
+    }
+  };
+
   // Handle Main Image Upload
   const handleMainImageUpload = (event) => {
     const file = event.target.files[0];
@@ -169,7 +237,7 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
       toast.error(error.message);
     }
   };
-  if (loading) {
+  if (loading || !itemId || !formData.first_name) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
@@ -184,7 +252,7 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
+      size="5xl"
       backdrop="blur"
       scrollBehavior="inside"
     >
@@ -377,7 +445,7 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
               <div>
                 <div className="flex justify-between mb-2">
                   <h4 className="font-bold mb-4">Reviews</h4>
-                  <Button
+                  {/* <Button
                     color="primary"
                     radius="sm"
                     onClick={() => {
@@ -388,7 +456,7 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
                     startContent={<FaPlus />}
                   >
                     Add Review
-                  </Button>
+                  </Button> */}
                 </div>
                 {formData.reviews.map((item, idx) => {
                   return (
@@ -433,6 +501,185 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
               </div>
             </>
           )}
+
+          {Array.isArray(formData.provider_services) &&
+            formData.provider_services.length > 0 && (
+              <>
+                <Divider className="my-4" />
+                <div className="">
+                  <div className="flex justify-between mb-2">
+                    <h4 className="font-bold mb-4">Provider Services</h4>
+                    <Button
+                      color="primary"
+                      radius="sm"
+                      onClick={() => {
+                        setSelectedItem(formData.provider_services[0]);
+                        setAddProviderService(true);
+                      }}
+                      className={styles.addButton}
+                      startContent={<FaPlus />}
+                    >
+                      Add Provider Service
+                    </Button>
+                  </div>
+                  {formData.provider_services?.map((item, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className=" border-1 border-gray-300 shadow-lg flex flex-col gap-2 p-2 mt-4 rounded-lg"
+                      >
+                        <div className="flex justify-end align-middle items-center cursor-pointer gap-2">
+                          <Image
+                            src="/images/icons/trash.svg"
+                            onClick={() => handleDeleteProvider(item.id)}
+                            className={styles.icon}
+                          />
+                          <Image
+                            src="/images/icons/edit.svg"
+                            className={`${styles.icon} cursor-pointer`}
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setEditProviderService(true);
+                            }}
+                          />
+                          <Button
+                            color="primary"
+                            radius="sm"
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setAddProviderServicePrice(true);
+                            }}
+                            className={styles.addButton}
+                            startContent={<FaPlus />}
+                          >
+                            Add Provider Price
+                          </Button>
+                        </div>
+                        <div className="flex gap-4 justify-between">
+                          <p className="text-strong">active:</p>{" "}
+                          <span>{item.active ? "Yes" : "No"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p className="text-strong">status:</p>{" "}
+                          <span>
+                            {item.status === "approved" ? (
+                              <>
+                                <span className="bg-green-100 text-green-500 rounded-lg p-1">
+                                  {item.status}
+                                </span>{" "}
+                              </>
+                            ) : item.status === "in_review" ? (
+                              <>
+                                <span className="bg-orange-100 text-orange-500 rounded-lg p-1">
+                                  In Review
+                                </span>{" "}
+                              </>
+                            ) : item.status === "stoped" ? (
+                              <>
+                                <span className="bg-slate-100 text-slate-500 rounded-lg p-1">
+                                  {item.status}
+                                </span>{" "}
+                              </>
+                            ) : item.status === "rejected" ? (
+                              <>
+                                <span className="bg-red-100 text-red-500 rounded-lg p-1">
+                                  {item.status}
+                                </span>{" "}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p className="text-strong">Cancellation:</p>{" "}
+                          <span>{item.cancellation_fee ? "Yes" : "No"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p className="text-strong">Cancellation Amount:</p>{" "}
+                          <span>{item.cancellation_fee_amount}</span>
+                        </div>
+                        {item.providerServicePrices.map((value, id) => {
+                          return (
+                            <div
+                              key={id}
+                              className="grid grid-cols-12 mt-4 gap-4 border rounded-lg py-2 px-4"
+                            >
+                              <div className="flex col-span-12 justify-end align-middle items-center cursor-pointer gap-2">
+                                <Image
+                                  src="/images/icons/trash.svg"
+                                  onClick={() =>
+                                    handleDeleteProviderPrice(value.id)
+                                  }
+                                  className={styles.icon}
+                                />
+                                <Image
+                                  src="/images/icons/edit.svg"
+                                  className={`${styles.icon} cursor-pointer`}
+                                  onClick={() => {
+                                    setSelectedItem(value);
+                                    setEditProviderServicePrice(true);
+                                  }}
+                                />
+                              </div>
+                              <div className="col-span-12  p-4 grid grid-cols-3 gap-6">
+                                <p>
+                                  <span className="font-semibold">
+                                    Service Type:
+                                  </span>{" "}
+                                  {item.service_type.name[currentlyLang] ||
+                                    "N/A"}
+                                </p>
+                                <p>
+                                  <span className="font-semibold">
+                                    Fixed Price:
+                                  </span>{" "}
+                                  {value.fixed_price || "N/A"}
+                                </p>
+                                <p>
+                                  <span className="font-semibold">
+                                    Hourly Price:
+                                  </span>{" "}
+                                  {value.hourly_price || "N/A"}
+                                </p>
+                                <p>
+                                  <span className="font-semibold">
+                                    Emirate:
+                                  </span>{" "}
+                                  {value.emirate?.name[currentlyLang] || "N/A"}
+                                </p>
+                                <p>
+                                  <span className="font-semibold">Status:</span>{" "}
+                                  {value.status == "active" ? (
+                                    <>
+                                      {" "}
+                                      <span className="bg-green-100 text-green-500 rounded-lg p-1">
+                                        {" "}
+                                        {value.status}
+                                      </span>
+                                    </>
+                                  ) : (
+                                    (
+                                      <>
+                                        <span className="bg-red-100 text-red-500 rounded-lg p-1">
+                                          {" "}
+                                          {value.status}
+                                        </span>
+                                      </>
+                                    ) || "N/A"
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                  {/* <Divider className="my-4" /> */}
+                </div>
+              </>
+            )}
           {/* *************** */}
           {/* Main Image Upload */}
           <p>Provider Avatar</p>
@@ -507,6 +754,34 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
             refreshData={refreshData}
             isOpen={addReview}
             onClose={() => setAddReview(false)}
+          />
+          <AddProviderServiceModal
+            itemId={selectedItem && selectedItem.id}
+            providerId={selectedItem && selectedItem.provider_id}
+            refreshData={refreshData}
+            isOpen={addProviderService}
+            onClose={() => setAddProviderService(false)}
+          />
+          <EditProviderServiceModal
+            itemId={selectedItem && selectedItem.id}
+            providerId={selectedItem && selectedItem.provider_id}
+            refreshData={refreshData}
+            isOpen={editProviderService}
+            onClose={() => setEditProviderService(false)}
+          />
+          <AddProviderServicePricesModal
+            itemId={selectedItem && selectedItem.id}
+            providerId={selectedItem && selectedItem.provider_id}
+            refreshData={refreshData}
+            isOpen={addProviderServicePrice}
+            onClose={() => setAddProviderServicePrice(false)}
+          />
+          <EditProviderServicePricesModal
+            itemId={selectedItem && selectedItem.id}
+            providerId={selectedItem && selectedItem.provider_id}
+            refreshData={refreshData}
+            isOpen={editProviderServicePrice}
+            onClose={() => setEditProviderServicePrice(false)}
           />
           <EditReviewModal
             itemId={selectedItem && selectedItem.id}
