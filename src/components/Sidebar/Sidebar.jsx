@@ -16,6 +16,8 @@ import {
   FaFileInvoiceDollar,
   FaExchangeAlt,
 } from "react-icons/fa";
+import { MdOutlineWork } from "react-icons/md";
+
 import { deleteCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -38,11 +40,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       link: "/service-requests",
       icon: <FaBriefcase />,
     },
-    // {
-    //   name: "Revenue and Finance",
-    //   link: "/finance",
-    //   icon: <FaMoneyBillWave />,
-    // },
+    {
+      name: "Companies",
+      link: "/companies",
+      icon: <MdOutlineWork />,
+    },
     { name: "Free Services", link: "/free-services", icon: <FaExchangeAlt /> },
     {
       name: "Invoices",

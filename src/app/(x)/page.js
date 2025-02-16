@@ -2,7 +2,7 @@
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Header from "@/components/Header/Header";
 import DashboardCard from "@/components/DashboardCard/DashboardCard";
-import styles from "./Layout.module.css";
+import styles from "@/app/Layout.module.css";
 import { FaThLarge, FaUsers, FaSyncAlt, FaBriefcase } from "react-icons/fa";
 import RecentRequestCard from "@/components/RecentRequestCard/RecentRequestCard";
 import { useState } from "react";
@@ -77,44 +77,33 @@ export default function Dashboard() {
   const changeLanguage = (lang) => i18n.changeLanguage(lang);
   return (
     <>
-      <div className={styles.container}>
-        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <Header user={user} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-        <div
-          className={`${styles.main} ${isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
-            }`}
-        >
 
-          <div
-
-            className={`${styles.dashboardContent} ${isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
-              }`}          >
-            <h1>Dashboard</h1>
-            {/* <h1>{t('title')}</h1>
-            <p>{t('description')}</p>
-            <button onClick={() => changeLanguage('ar')}>Arabic</button>
-            <button onClick={() => changeLanguage('en')}>English</button>
-            <button onClick={() => changeLanguage('tr')}>Turkish</button> */}
-            {/* <div className={styles.cards}>
-              {cardData.map((card, index) => (
-                <DashboardCard
-                  key={index}
-                  number={card.number}
-                  title={card.title}
-                  icon={card.icon}
-                  bgColor={card.bgColor}
-                />
-              ))}
-            </div> */}
-            {/* <h1 className="mt-6">Recent Requests</h1>
-            <div className={styles.cards}>
-              {recentRequests.map((request, index) => (
-                <RecentRequestCard key={index} {...request} />
-              ))}
-            </div> */}
-          </div>
-        </div>
+      <h1>Dashboard</h1>
+      <h1>{t('title')}</h1>
+      <p>{t('description')}</p>
+      <button onClick={() => changeLanguage('ar')}>Arabic</button>
+      <button onClick={() => changeLanguage('en')}>English</button>
+      <button onClick={() => changeLanguage('tr')}>Turkish</button>
+      <div className={styles.cards}>
+        {cardData.map((card, index) => (
+          <DashboardCard
+            key={index}
+            number={card.number}
+            title={card.title}
+            icon={card.icon}
+            bgColor={card.bgColor}
+          />
+        ))}
       </div>
+      <h1 className="mt-6">Recent Requests</h1>
+      <div className={styles.cards}>
+        {recentRequests.map((request, index) => (
+          <RecentRequestCard key={index} {...request} />
+        ))}
+      </div>
+      {/* </div> */}
+      {/* </div> */}
+      {/* </div> */}
 
       {/* <div className={styles.dashboardContent}> */}
 

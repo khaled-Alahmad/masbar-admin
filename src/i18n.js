@@ -11,8 +11,9 @@ i18n
     fallbackLng: 'en', // Default language
     supportedLngs: ['en', 'ar', 'tr'], // Supported languages
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', // Path to translation files
-    },
+      loadPath: '/locales/{{lng}}/translation.json', // Ensure the path matches
+    }
+    ,
     interpolation: {
       escapeValue: false, // React already escapes values to prevent XSS
     },
