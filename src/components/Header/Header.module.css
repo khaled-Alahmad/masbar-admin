@@ -14,11 +14,11 @@
   position: relative;
   cursor: pointer;
 }
-.toggleButton {
+:dir(ltr) .toggleButton {
   position: absolute;
   top: 20px;
   left: 80px;
-  background-color: #66BE56;
+  background-color: #66be56;
   color: white;
   border: none;
   border-radius: 5px;
@@ -27,18 +27,37 @@
   z-index: 1;
   transition: left 0.3s ease-in-out;
 }
-
-.toggleButton.open {
+:dir(rtl) .toggleButton {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  background-color: #66be56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+  transition: left 0.3s ease-in-out;
+}
+:dir(ltr) .toggleButton.open {
   left: 290px;
 }
 
-.toggleButton:hover {
+:dir(ltr) .toggleButton:hover {
+  background-color: #66be5698;
+}
+:dir(rtl) .toggleButton.open {
+  right: 290px;
+}
+
+:dir(rtl) .toggleButton:hover {
   background-color: #66be5698;
 }
 
 .notificationIcon {
   font-size: 2.5rem;
-  color: #66BE56;
+  color: #66be56;
   background-color: #f0f4ff;
   padding: 0.5rem;
   border-radius: 8px;

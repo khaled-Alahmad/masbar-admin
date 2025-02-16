@@ -6,6 +6,7 @@ import styles from "./Header.module.css";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
+import LanguageSwitcher from "@/utils/LanguageSwitcher";
 
 const Header = ({ user, toggleSidebar, isSidebarOpen }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -74,7 +75,7 @@ const Header = ({ user, toggleSidebar, isSidebarOpen }) => {
             </div>
           )}
         </div>
-
+        <LanguageSwitcher />
         {/* User Profile */}
         <div className={styles.profile} onClick={toggleDropdown}>
           <img src={user.avatar} alt="User Avatar" className={styles.avatar} />

@@ -122,6 +122,7 @@ const ServiceRequestDetailsModal = ({ isOpen, onClose, itemId }) => {
     request_filters,
   } = serviceData;
   console.log(serviceData);
+  console.log("currentlyLang", currentlyLang);
 
   return (
     <Modal

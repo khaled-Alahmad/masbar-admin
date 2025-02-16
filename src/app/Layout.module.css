@@ -45,7 +45,7 @@
   gap: 2rem;
 }
 
-.sidebar {
+:dir(ltr) .sidebar {
   width: 270px;
   position: absolute;
   height: 100%;
@@ -56,30 +56,57 @@
   /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
   z-index: 10; /* Ensure it's above the main content */
 }
-
-.sidebar.sidebarClosed {
+:dir(rtl) .sidebar {
+  width: 270px;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background-color: #fff;
+  transition: margin-left 0.3s ease-in-out; /* Smooth toggle effect */
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+  z-index: 10; /* Ensure it's above the main content */
+}
+:dir(ltr) .sidebar.sidebarClosed {
   width: 60px;
   margin-left: 0px;
   z-index: 10;
 }
+:dir(rtl) .sidebar.sidebarClosed {
+  width: 60px;
+  margin-right: 0px;
+  z-index: 10;
+}
+:dir(rtl) .sidebar.sidebarOpen {
+  margin-right: 0; /* Show sidebar */
+}
 
-.sidebar.sidebarOpen {
+:dir(ltr) .sidebar.sidebarOpen {
   margin-left: 0; /* Show sidebar */
 }
-
-.dashboardContent {
-  transition: margin-left 0.3s ease-in-out; /* Smooth adjustment for content */
+:dir(rtl) .dashboardContent {
+  transition: margin-right 0.3s ease-in-out; /* Smooth adjustment for content */
 }
 
-.dashboardContent.sidebarOpen {
+:dir(ltr) .dashboardContent {
+  transition: margin-left 0.3s ease-in-out; /* Smooth adjustment for content */
+}
+:dir(rtl) .dashboardContent.sidebarOpen {
+  /* margin-left: 0px; Adjust content when sidebar is open */
+  margin-right: 260px;
+}
+:dir(ltr) .dashboardContent.sidebarOpen {
   /* margin-left: 0px; Adjust content when sidebar is open */
   margin-left: 260px;
 }
 
-.dashboardContent.sidebarClosed {
+:dir(ltr) .dashboardContent.sidebarClosed {
   margin-left: 60px; /* Full width when sidebar is closed */
 }
 
+:dir(rtl) .dashboardContent.sidebarClosed {
+  margin-right: 60px; /* Full width when sidebar is closed */
+}
 .logo {
   text-align: center;
   display: flex;
@@ -112,7 +139,7 @@
 .logo span {
   font-weight: bold;
   font-size: 1.2rem;
-  color: #66BE56;
+  color: #66be56;
 }
 
 .menu {
@@ -142,21 +169,21 @@
 
 .menu a:hover {
   background-color: #e6f0ff;
-  color: #66BE56;
-  border-right: 4px solid #66BE56;
+  color: #66be56;
+  border-right: 4px solid #66be56;
 }
 .active > a {
-  color: var(--Color, #66BE56);
+  color: var(--Color, #66be56);
   font-family: "IBM Plex Sans Arabic";
   font-size: 1rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
-  border-right: 2px solid var(--Color, #66BE56);
+  border-right: 2px solid var(--Color, #66be56);
   background: rgba(25, 110, 184, 0.06);
 }
 .active .icon {
-  fill: #66BE56;
+  fill: #66be56;
 }
 .icon {
   font-size: 1.2rem;

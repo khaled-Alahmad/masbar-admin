@@ -137,7 +137,7 @@ const InvoiceDetailsModal = ({ isOpen, onClose, itemId }) => {
     >
       <ModalContent>
         <ModalHeader className={styles.modalHeader}>
-        Invoice Details #{id}
+          Invoice Details #{id}
         </ModalHeader>
         <ModalBody>
           {/* Service Details Section */}
@@ -223,52 +223,7 @@ const InvoiceDetailsModal = ({ isOpen, onClose, itemId }) => {
                   "N/A"}
               </span>
             </div>
-            {/* <div className="flex justify-between">
-              <strong>Service Type:</strong>{" "}
-              <span>{service_type?.name?.en || "N/A"}</span>
-            </div> */}
           </div>
-
-          {/* <Divider className="my-4" /> */}
-
-          {/* Client Details Section */}
-          {/* <div className={styles.details}>
-            <h3 className="font-bold">Client Details</h3>
-            <div className="flex gap-4 align-middle text-center">
-              <strong>Client Comment:</strong>{" "}
-              <span>{before_comment || "N/A"}</span>
-            </div>
-            {befor_record && (
-              <>
-                <div className="flex gap-4 align-middle items-center text-center">
-                  <strong>Client record:</strong>{" "}
-                  <span>
-                    {" "}
-                    <audio controls>
-                      <source src={befor_record} type="audio/mp4" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </span>
-                </div>
-              </>
-            )}
-            <div className="flex items-center gap-4 border-1 rounded-lg py-2 px-4">
-              <Avatar src={client?.user?.avatar || "/default-avatar.png"} />
-              <div className="flex flex-1 justify-between">
-                <strong>
-                  {client?.user?.first_name} {client?.user?.last_name}
-                </strong>
-                <p>Email: {client?.user?.email || "N/A"}</p>
-                <p>Phone: {client?.user?.phone_number || "N/A"}</p>
-                <p
-                  onClick={() => handleDetailsClientClick(client?.id)} // Ensure this is correct
-                  className=" text-blue-700 underline color-primary cursor-pointer"
-                >
-                  Show More
-                </p>
-              </div>
-            </div>
-          </div> */}
 
           {/* {provider && (
             <>
@@ -316,88 +271,70 @@ const InvoiceDetailsModal = ({ isOpen, onClose, itemId }) => {
           )} */}
 
           <Divider className="my-4" />
-          <div className="">
+          <div className={styles.details}>
             <h3 className="font-bold mb-2">Invoice Details</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Invoice ID
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Code
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Fixed Price
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Hourly Price
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Work Time
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Charity
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Tax
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Total
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Total With Tax
-                    </th>
-                    <th className="border text-nowrap border-gray-300 px-4 py-2 text-left">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b">
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.id}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.code}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.fixed_price} {serviceData.currency}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.hourly_price} {serviceData.currency}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.work_time_formatted}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.charity} {serviceData.currency}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.tax} %
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.total} {serviceData.currency}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      {serviceData.total_with_tax} {serviceData.currency}
-                    </td>
-                    <td className="border text-nowrap border-gray-300 px-4 py-2">
-                      <span
-                        className={
-                          serviceData.status === "unpaid"
-                            ? "bg-red-500 text-white p-1 rounded-lg"
-                            : "bg-green-500 text-white p-1 rounded-lg"
-                        }
-                      >
-                        {serviceData.status}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="flex justify-between">
+              <strong> Invoice ID:</strong> <span> {serviceData.id}</span>
             </div>
+
+            <div className="flex justify-between">
+              <strong> Code:</strong> <span> {serviceData.code}</span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Fixed Price :</strong>{" "}
+              <span>
+                {" "}
+                {serviceData.fixed_price} {serviceData.currency}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Hourly Price:</strong>{" "}
+              <span>
+                {" "}
+                {serviceData.hourly_price} {serviceData.currency}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Work Time:</strong>{" "}
+              <span> {serviceData.work_time_formatted}</span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Charity:</strong>{" "}
+              <span>
+                {" "}
+                {serviceData.charity} {serviceData.currency}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Tax:</strong> <span> {serviceData.tax} %</span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Total:</strong>{" "}
+              <span>
+                {" "}
+                {serviceData.total_with_tax} {serviceData.currency}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Total With Tax:</strong>{" "}
+              <span>{service_request.address || "N/A"}</span>
+            </div>
+            <div className="flex justify-between">
+              <strong> Status:</strong>{" "}
+              <span>
+                {" "}
+                <span
+                  className={
+                    serviceData.status === "unpaid"
+                      ? "bg-red-500 text-white p-1 rounded-lg"
+                      : "bg-green-500 text-white p-1 rounded-lg"
+                  }
+                >
+                  {serviceData.status}
+                </span>
+              </span>
+            </div>
+
             <Divider className="my-4" />
 
             {/* Payment Details Table */}

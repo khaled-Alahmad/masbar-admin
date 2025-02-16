@@ -72,18 +72,14 @@ export default function Dashboard() {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
-  const changeLanguage = (lang) => i18n.changeLanguage(lang);
   return (
     <>
 
-      <h1>Dashboard</h1>
-      <h1>{t('title')}</h1>
-      <p>{t('description')}</p>
-      <button onClick={() => changeLanguage('ar')}>Arabic</button>
-      <button onClick={() => changeLanguage('en')}>English</button>
-      <button onClick={() => changeLanguage('tr')}>Turkish</button>
+      <h1>{t('dashboard')}</h1>
+      {/* <p>Current Language: {i18n.language}</p> */}
+
       <div className={styles.cards}>
         {cardData.map((card, index) => (
           <DashboardCard
