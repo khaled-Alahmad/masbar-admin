@@ -17,3 +17,9 @@ export const phoneCode = [
 export const statusClients = [
     'ACTIVE', 'BANNED', 'PENDING'
 ];
+
+export const typeProvider = [
+    { label: "Citizen", value: "citizen" },
+    { label: "Resident", value: "resident" },
+
+];

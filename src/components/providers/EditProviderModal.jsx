@@ -19,7 +19,7 @@ import styles from "@/assets/css/components/ServiceCategories.module.css";
 import { deleteData, getData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { currentlyLang, languageKeys } from "@/utils/lang";
-import { phoneCode, statusClients } from "@/data/data";
+import { phoneCode, statusClients, typeProvider } from "@/data/data";
 import StarRating from "../ui/StarRating";
 import EditDocumentModal from "./EditDocumentModal";
 import AddDocumentModal from "./AddDocumentModal";
@@ -29,6 +29,7 @@ import AddProviderServiceModal from "./AddProviderServiceModal";
 import EditProviderServiceModal from "./EditProviderServiceModal";
 import AddProviderServicePricesModal from "./AddProviderServicePricesModal";
 import EditProviderServicePricesModal from "./EditProviderServicePricesModal";
+import { default as SelectReact } from "react-select";
 
 const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [formData, setFormData] = useState({
@@ -44,6 +45,9 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
     reviews: [],
     provider_services: [],
     gender: "male",
+    emirate_id: null,
+
+    type: "",
     existingPicture: null,
   });
   const [selectedItem, setSelectedItem] = useState(null);
@@ -60,7 +64,23 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
     useState(false);
 
   const [editReview, setEditReview] = useState(false);
+  const [services, setServices] = useState([]);
 
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getData(`/admin/emirates`);
+        console.log(response);
+        setServices(response.data || []);
+
+        // setServices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    // fetchServices();
+    fetchClients();
+  }, []);
   // Fetch existing data for the selected service
   useEffect(() => {
     const fetchServiceData = async () => {
@@ -92,6 +112,9 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
             gender: service.user.gender,
             status: service.user.status,
             documents: service.documents,
+            emirate_id: service.emirate_id,
+            type: service.type,
+
             reviews: service.reviews,
             provider_services: service.provider_services,
             picture: null,
@@ -213,6 +236,8 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
     data.append("user[password]", formData.password);
     data.append("user[status]", formData.status);
     data.append("user[gender]", formData.gender);
+    data.append("user[emirate_id]", formData.emirate_id);
+    data.append("type", formData.type);
 
     data.append("user[phone]", formData.phone);
     data.append("user[phone_code]", formData.phone_code);
@@ -308,6 +333,47 @@ const EditProviderModal = ({ isOpen, onClose, itemId, refreshData }) => {
             onChange={(e) => handleNameChange("password", e.target.value)}
             className={styles.inputField}
           /> */}
+          <div>
+            <label className="mb-2">Emirate Name</label>
+            <SelectReact
+              label="Emirate Name"
+              placeholder="Select Emirate Name"
+              variant="bordered"
+              options={services.map((service) => ({
+                value: service.id,
+                label: service.name[currentlyLang],
+              }))}
+              // fullWidth
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  emirate_id: selectedOption.value,
+                })
+              }
+            />
+          </div>
+          <div>
+            <label className="mb-2">Type</label>
+            <SelectReact
+              label="Type"
+              placeholder="Select Type"
+              variant="bordered"
+              options={typeProvider}
+              // fullWidth
+              value={
+                typeProvider.find((item) => item.value === formData.type) ||
+                null
+              }
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  type: selectedOption.value,
+                })
+              }
+            />
+          </div>
           <Input
             label={`Phone`}
             placeholder={`Enter Phone`}

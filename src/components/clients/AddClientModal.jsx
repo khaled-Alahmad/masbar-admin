@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Modal,
@@ -14,10 +14,11 @@ import {
 } from "@nextui-org/react";
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { postData } from "@/utils/apiHelper";
+import { getData, postData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
-import { languageKeys } from "@/utils/lang";
+import { currentlyLang, languageKeys } from "@/utils/lang";
 import { phoneCode } from "@/data/data";
+import { default as SelectReact } from "react-select";
 
 const AddClientModal = ({ isOpen, onClose, refreshData }) => {
   const [formData, setFormData] = useState({
@@ -28,10 +29,27 @@ const AddClientModal = ({ isOpen, onClose, refreshData }) => {
     phone_code: "",
     phone: "",
     password: "",
+    emirate_id: null,
 
     picture: null,
   });
+  const [services, setServices] = useState([]);
 
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getData(`/admin/emirates`);
+        console.log(response);
+        setServices(response.data || []);
+
+        // setServices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    // fetchServices();
+    fetchClients();
+  }, []);
   const handleMainImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -59,6 +77,7 @@ const AddClientModal = ({ isOpen, onClose, refreshData }) => {
     data.append("user[password]", formData.password);
     data.append("user[phone]", formData.phone);
     data.append("user[phone_code]", formData.phone_code);
+    data.append("user[emirate_id]", formData.emirate_id);
 
     if (formData.picture) data.append("user[avatar]", formData.picture);
 
@@ -127,6 +146,26 @@ const AddClientModal = ({ isOpen, onClose, refreshData }) => {
             onChange={(e) => handleNameChange("last_name", e.target.value)}
             className={styles.inputField}
           />
+          <div>
+            <label className="mb-2">Emirate Name</label>
+            <SelectReact
+              label="Emirate Name"
+              placeholder="Select Emirate Name"
+              variant="bordered"
+              options={services.map((service) => ({
+                value: service.id,
+                label: service.name[currentlyLang],
+              }))}
+              // fullWidth
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  emirate_id: selectedOption.value,
+                })
+              }
+            />
+          </div>
           <Input
             label={`Email`}
             placeholder={`Enter email`}

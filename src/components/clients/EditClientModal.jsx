@@ -14,8 +14,9 @@ import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
 import { getData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
-import { languageKeys } from "@/utils/lang";
+import { currentlyLang, languageKeys } from "@/utils/lang";
 import { phoneCode, statusClients } from "@/data/data";
+import { default as SelectReact } from "react-select";
 
 const EditClientModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [formData, setFormData] = useState({
@@ -27,9 +28,26 @@ const EditClientModal = ({ isOpen, onClose, itemId, refreshData }) => {
     password: "",
     status: "",
     picture: null,
+    emirate_id: null,
     existingPicture: null,
   });
+  const [services, setServices] = useState([]);
 
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getData(`/admin/emirates`);
+        console.log(response);
+        setServices(response.data || []);
+
+        // setServices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    // fetchServices();
+    fetchClients();
+  }, []);
   // Fetch existing data for the selected service
   useEffect(() => {
     const fetchServiceData = async () => {
@@ -45,6 +63,7 @@ const EditClientModal = ({ isOpen, onClose, itemId, refreshData }) => {
             phone: service.user.phone,
             status: service.user.status,
             picture: null,
+            emirate_id: service.emirate_id,
             existingPicture: service.user.avatar || null, // Set existing image URL
           });
         }
@@ -90,6 +109,7 @@ const EditClientModal = ({ isOpen, onClose, itemId, refreshData }) => {
     data.append("user[email]", formData.email);
     data.append("user[password]", formData.password);
     data.append("user[status]", formData.status);
+    data.append("user[emirate_id]", formData.emirate_id);
 
     data.append("user[phone]", formData.phone);
     data.append("user[phone_code]", formData.phone_code);
@@ -147,6 +167,26 @@ const EditClientModal = ({ isOpen, onClose, itemId, refreshData }) => {
             onChange={(e) => handleNameChange("last_name", e.target.value)}
             className={styles.inputField}
           />
+          <div>
+            <label className="mb-2">Emirate Name</label>
+            <SelectReact
+              label="Emirate Name"
+              placeholder="Select Emirate Name"
+              variant="bordered"
+              options={services.map((service) => ({
+                value: service.id,
+                label: service.name[currentlyLang],
+              }))}
+              // fullWidth
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  emirate_id: selectedOption.value,
+                })
+              }
+            />
+          </div>
           <Input
             label={`Email`}
             placeholder={`Enter email`}

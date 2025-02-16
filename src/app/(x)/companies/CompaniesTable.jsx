@@ -31,6 +31,9 @@ import ServiceTypeDetailsModal from "@/components/service-type/ServiceTypeDetail
 import { useRouter, useSearchParams } from "next/navigation";
 import ServiceRequestDetailsModal from "@/components/service-requests/ServiceRequestDetailsModal";
 import InvoiceDetailsModal from "@/components/invoices/InvoiceDetailsModal";
+import AddCompanyModal from "@/components/companies/AddCompanyModal";
+import EditCompanyModal from "@/components/companies/EditCompanyModal";
+import CompanyDetailsModal from "@/components/companies/CompanyDetailsModal";
 
 const CompaniesTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -142,7 +145,7 @@ const CompaniesTable = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      await deleteData(`/admin/invoices/${selectedItemId}`);
+      await deleteData(`/admin/companies/${selectedItemId}`);
       setIsDeleteModalOpen(false);
       toast.success("Deleted service successful!");
       fetchServices();
@@ -591,20 +594,24 @@ const CompaniesTable = () => {
           </>
         )}
       </>
-
-      <EditServiceTypeModal
+      <AddCompanyModal
+        refreshData={fetchServices}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+      <EditCompanyModal
         refreshData={fetchServices}
         isOpen={isAddModalOpen}
         itemId={selectedItemId}
         onClose={() => setAddModalOpen(false)}
       />
       <ConfirmDeleteModal
-        text={"Are You Sure delete This Service Request?"}
+        text={"Are You Sure delete This Company?"}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={handleConfirmDelete}
       />
-      <InvoiceDetailsModal
+      <CompanyDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
         itemId={selectedItemId}

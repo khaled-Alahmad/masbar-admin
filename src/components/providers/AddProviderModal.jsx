@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Modal,
@@ -14,12 +14,14 @@ import {
   RadioGroup,
   Radio,
 } from "@nextui-org/react";
+import { default as SelectReact } from "react-select";
+
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { postData } from "@/utils/apiHelper";
+import { getData, postData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
-import { languageKeys } from "@/utils/lang";
-import { phoneCode } from "@/data/data";
+import { currentlyLang, languageKeys } from "@/utils/lang";
+import { phoneCode, typeProvider } from "@/data/data";
 
 const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
   const [formData, setFormData] = useState({
@@ -31,10 +33,28 @@ const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
     phone: "",
     gender: "male",
     password: "",
+    type: "",
+    emirate_id: null,
 
     picture: null,
   });
+  const [services, setServices] = useState([]);
 
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getData(`/admin/emirates`);
+        console.log(response);
+        setServices(response.data || []);
+
+        // setServices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    // fetchServices();
+    fetchClients();
+  }, []);
   const handleMainImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -62,6 +82,9 @@ const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
     data.append("user[password]", formData.password);
     data.append("user[phone]", formData.phone);
     data.append("user[gender]", formData.gender);
+    data.append("user[emirate_id]", formData.emirate_id);
+
+    data.append("type", formData.type);
 
     data.append("user[phone_code]", formData.phone_code);
 
@@ -85,7 +108,7 @@ const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
           phone_code: "",
           phone: "",
           password: "",
-
+          type: "",
           picture: null,
         });
         onClose();
@@ -140,6 +163,26 @@ const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
             <Radio value="male">Male</Radio>
             <Radio value="female">Female</Radio>
           </RadioGroup>
+          <div>
+            <label className="mb-2">Emirate Name</label>
+            <SelectReact
+              label="Emirate Name"
+              placeholder="Select Emirate Name"
+              variant="bordered"
+              options={services.map((service) => ({
+                value: service.id,
+                label: service.name[currentlyLang],
+              }))}
+              // fullWidth
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  emirate_id: selectedOption.value,
+                })
+              }
+            />
+          </div>
 
           <Input
             label={`Email`}
@@ -196,7 +239,24 @@ const AddProviderModal = ({ isOpen, onClose, refreshData }) => {
             onChange={(e) => handleNameChange("phone", e.target.value)}
             className={styles.inputField}
           />
+          <div>
+            <label className="mb-2">Type</label>
+            <SelectReact
+              label="Type"
+              placeholder="Select Type"
+              variant="bordered"
+              options={typeProvider}
+              // fullWidth
 
+              labelPlacement="outside"
+              onChange={(selectedOption) =>
+                setFormData({
+                  ...formData,
+                  type: selectedOption.value,
+                })
+              }
+            />
+          </div>
           {/* Image Upload Section */}
           <p className={styles.sectionTitle}>Provider Avatar</p>
           {/* <small className={styles.sectionSubtitle}>
