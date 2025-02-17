@@ -5,10 +5,31 @@ import DashboardCard from "@/components/DashboardCard/DashboardCard";
 import styles from "@/app/Layout.module.css";
 import { FaThLarge, FaUsers, FaSyncAlt, FaBriefcase } from "react-icons/fa";
 import RecentRequestCard from "@/components/RecentRequestCard/RecentRequestCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getData } from "@/utils/apiHelper";
+import ServicesRequestDaysTable from "@/components/ui/ServicesRequestDaysTable";
+import { Card } from "@nextui-org/react";
+import ServiceRequestReviewsDays from "@/components/ui/ServiceRequestReviewsDays";
 
 export default function Dashboard() {
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getData(`/admin/statistics`);
+        console.log(response);
+        setServices(response.data?.statistics || []);
+
+        // setServices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    // fetchServices();
+    fetchClients();
+  }, []);
   const cardData = [
     {
       number: "500",
@@ -81,29 +102,35 @@ export default function Dashboard() {
       {/* <p>Current Language: {i18n.language}</p> */}
 
       <div className={styles.cards}>
-        {cardData.map((card, index) => (
+        {services.map((card, index) => (
           <DashboardCard
             key={index}
-            number={card.number}
-            title={card.title}
+            number={card.value}
+            title={card.label}
             icon={card.icon}
-            bgColor={card.bgColor}
+            bgColor={card.color}
           />
         ))}
       </div>
-      <h1 className="mt-6">Recent Requests</h1>
-      <div className={styles.cards}>
-        {recentRequests.map((request, index) => (
-          <RecentRequestCard key={index} {...request} />
-        ))}
+
+      <div className="flex lg:flex-row flex-col   mt-6 gap-6">
+        {/* <Card className="p-4 my-8"> */}
+        <div className="lg:w-[55%] w-auto ">
+
+
+          <ServicesRequestDaysTable />
+        </div>
+        {/* </Card> */}
+
+        {/* <Card className="p-4 my-8 h-auto"> */}
+        <div className="lg:w-[45%] w-auto">
+
+          <ServiceRequestReviewsDays
+          />
+        </div>
+        {/* </Card> */}
       </div>
-      {/* </div> */}
-      {/* </div> */}
-      {/* </div> */}
 
-      {/* <div className={styles.dashboardContent}> */}
-
-      {/* </div> */}
     </>
   );
 }

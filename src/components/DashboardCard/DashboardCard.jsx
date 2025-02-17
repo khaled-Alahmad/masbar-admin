@@ -7,7 +7,7 @@ const DashboardCard = ({ number, title, icon, bgColor }) => {
         <h2 className={styles.number}>{number}</h2>
         <p className={styles.title}>{title}</p>
       </div>
-      <div className={styles.icon}>{icon}</div>
+      {/* <div className={styles.icon}>{`<${icon} />`}</div> */}
     </div>
   );
 };
