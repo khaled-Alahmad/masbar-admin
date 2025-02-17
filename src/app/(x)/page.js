@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { getData } from "@/utils/apiHelper";
 import ServicesRequestDaysTable from "@/components/ui/ServicesRequestDaysTable";
 import { Card } from "@nextui-org/react";
-import ServiceRequestReviewsDays from "@/components/ui/ServiceRequestReviewsDays";
+import CustomerReviews from "@/components/ui/CustomerReviews";
 
 export default function Dashboard() {
   const [services, setServices] = useState([]);
@@ -125,7 +125,7 @@ export default function Dashboard() {
         {/* <Card className="p-4 my-8 h-auto"> */}
         <div className="lg:w-[45%] w-auto">
 
-          <ServiceRequestReviewsDays
+          <CustomerReviews
           />
         </div>
         {/* </Card> */}
