@@ -5,11 +5,11 @@ import DashboardCard from "@/components/DashboardCard/DashboardCard";
 import styles from "@/app/Layout.module.css";
 import { FaThLarge, FaUsers, FaSyncAlt, FaBriefcase } from "react-icons/fa";
 import RecentRequestCard from "@/components/RecentRequestCard/RecentRequestCard";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getData } from "@/utils/apiHelper";
 import ServicesRequestDaysTable from "@/components/ui/ServicesRequestDaysTable";
-import { Card } from "@nextui-org/react";
+import { Card, Spinner } from "@nextui-org/react";
 import CustomerReviews from "@/components/ui/CustomerReviews";
 
 export default function Dashboard() {
@@ -117,16 +117,20 @@ export default function Dashboard() {
         {/* <Card className="p-4 my-8"> */}
         <div className="lg:w-[55%] w-auto ">
 
+          <Suspense fallback={<Spinner color="primary" />}>
 
-          <ServicesRequestDaysTable />
+            <ServicesRequestDaysTable />
+          </Suspense>
         </div>
         {/* </Card> */}
 
         {/* <Card className="p-4 my-8 h-auto"> */}
         <div className="lg:w-[45%] w-auto">
+          <Suspense fallback={<Spinner color="primary" />}>
 
-          <CustomerReviews
-          />
+            <CustomerReviews
+            />
+          </Suspense>
         </div>
         {/* </Card> */}
       </div>
