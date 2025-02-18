@@ -81,6 +81,7 @@ const ServicesRequestDaysTable = () => {
     sort_order: "asc", // true for ascending, false for descending
     created_at_from: null,
     created_at_to: null,
+    created_at: new Date(),
   });
 
   const handleDetailsClick = (id) => {
@@ -384,7 +385,32 @@ const ServicesRequestDaysTable = () => {
     }
   };
   console.log(clients);
+  // Increment Date (Next Day)
+  const incrementDate = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      created_at: new Date(
+        prevFilters.created_at
+          ? new Date(prevFilters.created_at).setDate(
+              new Date(prevFilters.created_at).getDate() + 1
+            )
+          : new Date()
+      ),
+    }));
+  };
 
+  const decrementDate = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      created_at: new Date(
+        prevFilters.created_at
+          ? new Date(prevFilters.created_at).setDate(
+              new Date(prevFilters.created_at).getDate() - 1
+            )
+          : new Date()
+      ),
+    }));
+  };
   return (
     <div
       className={styles.container}
@@ -402,9 +428,9 @@ const ServicesRequestDaysTable = () => {
           // </tr>
         )}
       </h2>
-      {/* <div className={styles.header}>
-        <div className={styles.filters}> */}
-      {/* <Input
+      <div className={styles.header}>
+        <div className={styles.filters}>
+          {/* <Input
             label="Search"
             placeholder="Search..."
             className="min-w-[200px] custom-input"
@@ -414,7 +440,7 @@ const ServicesRequestDaysTable = () => {
             radius="sm"
             variant="bordered"
           /> */}
-      {/* <div>
+          {/* <div>
             <label className=" text-sm">Client Name</label>
             <Select
               // menuIsOpen
@@ -430,7 +456,7 @@ const ServicesRequestDaysTable = () => {
               onChange={handleSelectChange}
             />
           </div> */}
-      {/* <DateRangePicker
+          {/* <DateRangePicker
             variant="bordered"
             radius="sm"
             labelPlacement="outside"
@@ -459,31 +485,19 @@ const ServicesRequestDaysTable = () => {
           >
             Clear
           </Button> */}
-      {/* </div>
-        <div className={styles.buttons}> */}
-      {/* <Button onPress={toggleSortOrder} radius="sm" color="primary">
-            {filters.sort_order === "asc" ? "Asc" : "Desc"}
-          </Button> */}
+        </div>
 
-      {/* <Button
-            color="primary"
-            radius="sm"
-            onClick={() => setIsModalOpen(true)}
-            className={styles.addButton}
-            startContent={<FaPlus />}
-          >
-            Add Service
-          </Button> */}
-      {/* <Button
-            radius="sm"
-            className={styles.exportButton}
-            onClick={exportCheckedRows}
-            startContent={<FaFileExport />}
-          >
-            Export
+        <div className={`${styles.buttons} justify-center flex items-center align-middle` }>
+          <Button color="primary" onPress={decrementDate}>
+            -
+          </Button>
+          <span>{filters.created_at.toISOString().split("T")[0]}</span>{" "}
+          {/* Display Date */}
+          <Button onPress={incrementDate} color="primary">
+            +
           </Button>
         </div>
-      </div> */}
+      </div>
 
       {/* Loading State */}
       {/* {loading ? (
