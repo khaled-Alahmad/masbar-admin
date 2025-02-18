@@ -1,59 +1,48 @@
-"use client"
-import Sidebar from "@/components/Sidebar/Sidebar";
-import Header from "@/components/Header/Header";
-import DashboardCard from "@/components/DashboardCard/DashboardCard";
-import styles from "@/app/Layout.module.css";
-import { FaThLarge, FaUsers, FaSyncAlt, FaBriefcase } from "react-icons/fa";
-import RecentRequestCard from "@/components/RecentRequestCard/RecentRequestCard";
-import { Suspense, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+"use client";
+import { useEffect, useState, Suspense } from "react";
 import { getData } from "@/utils/apiHelper";
+import DashboardCard from "@/components/DashboardCard/DashboardCard";
 import ServicesRequestDaysTable from "@/components/ui/ServicesRequestDaysTable";
-import { Card, Skeleton, Spinner } from "@nextui-org/react";
-import CustomerReviews from "@/components/ui/CustomerReviews";
+import { Spinner } from "@nextui-org/react";
+import { useTranslation } from "react-i18next";
+import styles from "@/app/Layout.module.css";
 
 export default function Dashboard() {
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const { t } = useTranslation();
+  const [services, setServices] = useState(() => {
+    // Load initial data from localStorage
+    if (typeof window !== "undefined") {
+      const savedData = localStorage.getItem("statistics");
+      return savedData ? JSON.parse(savedData) : [];
+    }
+    return [];
+  });
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const response = await getData(`/admin/statistics`);
         console.log(response);
-        setServices(response.data?.statistics || []);
+
+        if (response.data?.statistics) {
+          setServices(response.data.statistics);
+          localStorage.setItem("statistics", JSON.stringify(response.data.statistics));
+        }
       } catch (error) {
-        console.error("Error fetching clients:", error);
-      } finally {
-        setLoading(false); // Stop loading when request completes
+        console.error("Error fetching statistics:", error);
       }
     };
+
     fetchClients();
   }, []);
 
-  const user = { avatar: "/images/user-avatar.svg" };
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
-
-  const { t } = useTranslation();
-
   return (
     <>
+      <h1>{t("dashboard")}</h1>
 
-      <h1>{t('dashboard')}</h1>
-      {/* <p>Current Language: {i18n.language}</p> */}
+      {/* Show stored data immediately */}
       <div className={styles.cards}>
-        {loading
-          ? // Show 4 Skeleton Loading Cards
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className={styles.skeletonCard}>
-              <Skeleton className={styles.skeletonIcon} width={50} height={50} />
-              <Skeleton className={styles.skeletonTitle} width="60%" height={20} />
-              <Skeleton className={styles.skeletonValue} width="40%" height={30} />
-            </div>
-          ))
-          : // Show actual data
+        {services.length > 0 ? (
           services.map((card, index) => (
             <DashboardCard
               key={index}
@@ -62,32 +51,19 @@ export default function Dashboard() {
               icon={card.icon}
               bgColor={card.color}
             />
-          ))}
+          ))
+        ) : (
+          <p>{t("no_data_available")}</p>
+        )}
       </div>
 
-
-      <div className="flex lg:flex-row flex-col   mt-6 gap-6">
-        {/* <Card className="p-4 my-8"> */}
-        <div className="lg:w-[100%] w-auto ">
-
+      <div className="flex lg:flex-row flex-col mt-6 gap-6">
+        <div className="lg:w-[100%] w-auto">
           <Suspense fallback={<Spinner color="primary" />}>
-
             <ServicesRequestDaysTable />
           </Suspense>
         </div>
-        {/* </Card> */}
-
-        {/* <Card className="p-4 my-8 h-auto"> */}
-        {/* <div className="lg:w-[45%] w-auto">
-          <Suspense fallback={<Spinner color="primary" />}>
-
-            <CustomerReviews
-            />
-          </Suspense>
-        </div> */}
-        {/* </Card> */}
       </div>
-
     </>
   );
 }

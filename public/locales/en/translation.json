@@ -1,5 +1,6 @@
 {
   "title": "Title",
   "description": "This is the English description",
-  "dashboard": "Dashboard"
+  "dashboard": "Dashboard",
+  "no_data_available": "no data available"
 }
