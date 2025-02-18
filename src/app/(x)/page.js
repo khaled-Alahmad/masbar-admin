@@ -9,11 +9,12 @@ import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getData } from "@/utils/apiHelper";
 import ServicesRequestDaysTable from "@/components/ui/ServicesRequestDaysTable";
-import { Card, Spinner } from "@nextui-org/react";
+import { Card, Skeleton, Spinner } from "@nextui-org/react";
 import CustomerReviews from "@/components/ui/CustomerReviews";
 
 export default function Dashboard() {
   const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -23,6 +24,8 @@ export default function Dashboard() {
         setServices(response.data?.statistics || []);
       } catch (error) {
         console.error("Error fetching clients:", error);
+      } finally {
+        setLoading(false); // Stop loading when request completes
       }
     };
     fetchClients();
@@ -41,15 +44,25 @@ export default function Dashboard() {
       <h1>{t('dashboard')}</h1>
       {/* <p>Current Language: {i18n.language}</p> */}
       <div className={styles.cards}>
-        {services.map((card, index) => (
-          <DashboardCard
-            key={index}
-            number={card.value}
-            title={card.label}
-            icon={card.icon}  // Ensure this is passed correctly
-            bgColor={card.color}
-          />
-        ))}
+        {loading
+          ? // Show 4 Skeleton Loading Cards
+          Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className={styles.skeletonCard}>
+              <Skeleton className={styles.skeletonIcon} width={50} height={50} />
+              <Skeleton className={styles.skeletonTitle} width="60%" height={20} />
+              <Skeleton className={styles.skeletonValue} width="40%" height={30} />
+            </div>
+          ))
+          : // Show actual data
+          services.map((card, index) => (
+            <DashboardCard
+              key={index}
+              number={card.value}
+              title={card.label}
+              icon={card.icon}
+              bgColor={card.color}
+            />
+          ))}
       </div>
 
 
