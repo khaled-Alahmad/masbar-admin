@@ -12,6 +12,7 @@ import {
   SelectItem,
   DatePicker,
 } from "@nextui-org/react";
+import AsyncSelect from "react-select/async";
 import Select from "react-select";
 
 import { parseDate } from "@internationalized/date";
@@ -34,27 +35,42 @@ const AddCompanyModal = ({ isOpen, onClose, refreshData }) => {
     phone_number: "",
     providers_count: "",
   });
-  const [services, setServices] = useState([]);
+  const [defaultOptions, setDefaultOptions] = useState([]);
 
+  // Load initial default options (limit to 5)
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchInitialProviders = async () => {
       try {
-        const response = await getData(`/admin/providers`);
-        console.log(response);
-
-        const clientsData = response.data.map((item) => ({
-          label: item.user.first_name + " " + item.user.last_name,
+        // Adjust your endpoint to limit the results (if supported by your API)
+        const response = await getData(`/admin/providers?limit=5`);
+        const providers = response.data.map((item) => ({
+          label: `${item.user.first_name} ${item.user.last_name}`,
           value: item.user.id,
         }));
-
-        setServices(clientsData || []);
+        setDefaultOptions(providers);
       } catch (error) {
-        console.error("Error fetching clients:", error);
+        console.error("Error fetching initial providers:", error);
       }
     };
 
-    fetchClients();
+    fetchInitialProviders();
   }, []);
+
+  // This function is called when the user types in the select
+  const loadOptions = async (inputValue, callback) => {
+    try {
+      // Call your API with the search query
+      const response = await getData(`/admin/providers?search=${inputValue}`);
+      const providers = response.data.map((item) => ({
+        label: `${item.user.first_name} ${item.user.last_name}`,
+        value: item.user.id,
+      }));
+      callback(providers);
+    } catch (error) {
+      console.error("Error fetching providers on search:", error);
+      callback([]);
+    }
+  };
 
   const handleNameChange = (att, value) => {
     setFormData((prev) => ({
@@ -110,7 +126,7 @@ const AddCompanyModal = ({ isOpen, onClose, refreshData }) => {
     }
   };
 
-  if (!services) {
+  if (!defaultOptions) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
@@ -136,20 +152,18 @@ const AddCompanyModal = ({ isOpen, onClose, refreshData }) => {
           {/* {languageKeys.map((lang) => ( */}
           <div>
             <label className="mb-2">Provider Name</label>
-            <Select
-              label="Provider Name"
-              placeholder="Client Name"
-              variant="bordered"
-              options={services}
-              // fullWidth
-
-              labelPlacement="outside"
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={defaultOptions}
+              loadOptions={loadOptions}
               onChange={(selectedOption) =>
                 setFormData({
                   ...formData,
-                  owner_id: selectedOption.value,
+                  owner_id: selectedOption ? selectedOption.value : null,
                 })
               }
+              placeholder="Select Provider"
+              isClearable
             />
           </div>
 

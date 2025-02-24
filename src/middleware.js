@@ -17,5 +17,27 @@ export function middleware(request) {
 }
 
 export const config = {
-    matcher: ["/", "/fqa/:path*", "/requests/:path*", "/services/:path*"],
+    matcher: [
+        "/",
+        "/fqa/:path*",
+        "/requests/:path*",
+        "/services/:path*",
+        "/services-type/:path*",
+
+        "/service-requests/:path*",
+
+        "/free-services/:path*",
+
+        "/companies/:path*",
+
+        "/invoices/:path*",
+        "/service-request-reviews/:path*",
+        "/ads/:path*",
+        "/clients/:path*",
+        "/providers/:path*",
+        "/settings/:path*",
+
+
+
+    ],
 };
