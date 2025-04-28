@@ -18,6 +18,10 @@ import {
   DateRangePicker,
   Image,
   Switch,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
@@ -34,6 +38,7 @@ import InvoiceDetailsModal from "@/components/invoices/InvoiceDetailsModal";
 import AddCompanyModal from "@/components/companies/AddCompanyModal";
 import EditCompanyModal from "@/components/companies/EditCompanyModal";
 import CompanyDetailsModal from "@/components/companies/CompanyDetailsModal";
+import { CiMenuKebab } from "react-icons/ci";
 
 const CompaniesTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -177,7 +182,9 @@ const CompaniesTable = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
-
+  const handleRequestShow = (id) => {
+    router.push(`/providers?company_id=${id}`);
+  };
   const columns = [
     {
       header: ({ table }) => (
@@ -348,6 +355,25 @@ const CompaniesTable = () => {
             className={styles.icon}
             onClick={() => handleDetailsClick(row.original?.id)} // Ensure this is correct
           />
+          <Dropdown>
+            <DropdownTrigger>
+              <span className={styles.icon}>
+                <CiMenuKebab />
+              </span>
+            </DropdownTrigger>
+            <DropdownMenu
+            // aria-label="Action event example"
+            // onAction={(key) => alert(key)}
+            >
+              <DropdownItem
+                key="new"
+                onPress={() => handleRequestShow(row.original?.id)}
+              >
+                Show Providers
+              </DropdownItem>
+
+            </DropdownMenu>
+          </Dropdown>
         </div>
       ),
     },

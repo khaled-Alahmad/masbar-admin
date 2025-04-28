@@ -6,6 +6,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { CiMenuKebab } from "react-icons/ci";
+import Select from "react-select";
 
 import { FaPlus, FaFileExport } from "react-icons/fa";
 import { getData, deleteData, postData, putData } from "@/utils/apiHelper";
@@ -35,7 +36,7 @@ import ServiceTypeDetailsModal from "@/components/service-type/ServiceTypeDetail
 import AddClientModal from "@/components/clients/AddClientModal";
 import EditClientModal from "@/components/clients/EditClientModal";
 import ClientDetailsModal from "@/components/clients/ClientDetailsModal";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AddProviderModal from "@/components/providers/AddProviderModal";
 import EditProviderModal from "@/components/providers/EditProviderModal";
 import ProviderDetailsModal from "@/components/providers/ProviderDetailsModal";
@@ -58,13 +59,40 @@ const ProvidersTable = () => {
   const [limit] = useState(10);
   const [loadingFilter, setLoadingFilter] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("company_id");
 
   const [filters, setFilters] = useState({
+    company_id: id || null,
     search: "",
     sort_order: "asc", // true for ascending, false for descending
     created_at_from: null,
     created_at_to: null,
   });
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const response = await getData(`/admin/companies`);
+        console.log(response);
+        const clientOptions = response.data.map((item) => ({
+          label: `${item.name} `,
+          value: String(item.id), // Ensure value is a string
+        }));
+
+        // Add the "All" option at the beginning
+        const allOption = { label: "All", value: null };
+        setCompanies([allOption, ...clientOptions]); // Prepend the "All" option
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+    // fetchServices();
+    fetchCompanies();
+  }, []);
+
   const handleDetailsClick = (id) => {
     setSelectedItemId(id);
     setDetailsModalOpen(true);
@@ -398,9 +426,26 @@ const ProvidersTable = () => {
     setFilters({
       ...filters,
       search: "",
+      company_id: null,
+      sort_order: "asc", // true for ascending, false for descending
       created_at_from: null,
       created_at_to: null,
     });
+  };
+  const handleSelectChange = (selectedOption) => {
+    const newCompanyId = selectedOption ? selectedOption.value : null;
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      company_id: newCompanyId,
+    }));
+
+    // Update URL (remove `id` if cleared)
+    if (newCompanyId) {
+      router.push(`/providers?company_id=${newCompanyId}`);
+    } else {
+      router.push(`/providers`);
+    }
   };
   return (
     <div className={styles.container}>
@@ -421,7 +466,7 @@ const ProvidersTable = () => {
           <Input
             label="Search"
             placeholder="Search..."
-            className="min-w-[200px] custom-input"
+            className="min-w-[150px] custom-input"
             type="text"
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
             labelPlacement="outside"
@@ -434,7 +479,7 @@ const ProvidersTable = () => {
             labelPlacement="outside"
             label="Date"
             aria-label="Select date range"
-            className="min-w-[200px] custom-input"
+            className="min-w-[150px] custom-input"
             // className={styles.dateRangePicker}
             value={{
               start: filters.created_at_from,
@@ -449,6 +494,22 @@ const ProvidersTable = () => {
               });
             }}
           />
+          <div>
+            <label className=" text-sm">Company Name</label>
+            <Select
+              // menuIsOpen
+              label="Company Name"
+              placeholder="Select Company"
+              classNamePrefix="react-select"
+              className="min-w-[150px] custom-input mt-1"
+              variant="bordered"
+              theme={"primary"}
+              value={companies.filter((option) => option.value == id)}
+              options={companies}
+              labelPlacement="outside"
+              onChange={handleSelectChange}
+            />
+          </div>
           <Button
             className={styles.clearButton}
             onPress={clearDateRange}
