@@ -79,9 +79,8 @@ const ServicesRequestDaysTable = () => {
     client_id: id || null,
     search: "",
     sort_order: "asc", // true for ascending, false for descending
-    created_at_from: null,
-    created_at_to: null,
-    created_at: new Date(),
+    created_at_from: new Date().toISOString().split('T')[0],
+    created_at_to: new Date().toISOString().split('T')[0]
   });
 
   const handleDetailsClick = (id) => {
@@ -387,29 +386,27 @@ const ServicesRequestDaysTable = () => {
   console.log(clients);
   // Increment Date (Next Day)
   const incrementDate = () => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      created_at: new Date(
-        prevFilters.created_at
-          ? new Date(prevFilters.created_at).setDate(
-              new Date(prevFilters.created_at).getDate() + 1
-            )
-          : new Date()
-      ),
-    }));
+    setFilters((prevFilters) => {
+      const currentDate = new Date(prevFilters.created_at_from);
+      currentDate.setDate(currentDate.getDate() + 1);
+      return {
+        ...prevFilters,
+        created_at_from: currentDate.toISOString().split('T')[0],
+        created_at_to: currentDate.toISOString().split('T')[0]
+      };
+    });
   };
 
   const decrementDate = () => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      created_at: new Date(
-        prevFilters.created_at
-          ? new Date(prevFilters.created_at).setDate(
-              new Date(prevFilters.created_at).getDate() - 1
-            )
-          : new Date()
-      ),
-    }));
+    setFilters((prevFilters) => {
+      const currentDate = new Date(prevFilters.created_at_from);
+      currentDate.setDate(currentDate.getDate() - 1);
+      return {
+        ...prevFilters,
+        created_at_from: currentDate.toISOString().split('T')[0],
+        created_at_to: currentDate.toISOString().split('T')[0]
+      };
+    });
   };
   return (
     <div
@@ -491,7 +488,7 @@ const ServicesRequestDaysTable = () => {
           <Button color="primary" onPress={decrementDate}>
             -
           </Button>
-          <span>{filters.created_at.toISOString().split("T")[0]}</span>{" "}
+          <span>{new Date(filters.created_at_from).toISOString().split("T")[0]}</span>{" "}
           {/* Display Date */}
           <Button onPress={incrementDate} color="primary">
             +
