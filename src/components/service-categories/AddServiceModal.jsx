@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { postData } from "@/utils/apiHelper";
+import { patchData, postData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { languageKeys } from "@/utils/lang";
 
@@ -20,6 +20,12 @@ const AddServiceModal = ({ isOpen, onClose, refreshData }) => {
     name: {},
     order: "",
     picture: null,
+    tag_name: {
+      en: "",
+      ar: ""
+    },
+    tag_color: "#FF6666",
+    tag_type: "add"
   });
 
   const handleMainImageUpload = (event) => {
@@ -53,22 +59,25 @@ const AddServiceModal = ({ isOpen, onClose, refreshData }) => {
     data.append("order", formData.order);
     if (formData.picture) data.append("picture", formData.picture);
 
-    // Log the data to inspect before sending
-    console.log("Data to be sent:");
-    for (let [key, value] of data.entries()) {
-      if (key === "name") {
-        console.log(`${key}:`, JSON.parse(value)); // Parse the JSON string for better logging
-      } else {
-        console.log(`${key}:`, value);
-      }
-    }
-
+    // First create the service category
     try {
       const response = await postData("/admin/service-categories", data);
       if (response.success) {
-        toast.success("Service added successfully!");
-        refreshData();
-        onClose();
+        // If service category is created successfully, add the tag
+        const tagData = {
+          type: formData.tag_type,
+          tag_name: formData.tag_name,
+          tag_color: formData.tag_color
+        };
+
+        const tagResponse = await patchData(`/admin/service-categories/${response.data.id}/update-tag`, tagData);
+        if (tagResponse.success) {
+          toast.success("Service and tag added successfully!");
+          refreshData();
+          onClose();
+        } else {
+          toast.error("Service created but failed to add tag.");
+        }
       } else {
         toast.error("Failed to add service.");
       }
@@ -80,10 +89,54 @@ const AddServiceModal = ({ isOpen, onClose, refreshData }) => {
         name: {},
         order: "",
         picture: null,
+        tag_name: {
+          en: "",
+          ar: ""
+        },
+        tag_color: "#FF6666",
+        tag_type: "add"
       });
     }
-  };
 
+    // // Log the data to inspect before sending
+    // console.log("Data to be sent:");
+    // for (let [key, value] of data.entries()) {
+    //   if (key === "name") {
+    //     console.log(`${key}:`, JSON.parse(value)); // Parse the JSON string for better logging
+    //   } else {
+    //     console.log(`${key}:`, value);
+    //   }
+    // }
+
+    // try {
+    //   const response = await postData("/admin/service-categories", data);
+    //   if (response.success) {
+    //     toast.success("Service added successfully!");
+    //     refreshData();
+    //     onClose();
+    //   } else {
+    //     toast.error("Failed to add service.");
+    //   }
+    // } catch (error) {
+    //   console.error("API Error:", error);
+    //   toast.error("Something went wrong. Please try again.");
+    // } finally {
+    //   setFormData({
+    //     name: {},
+    //     order: "",
+    //     picture: null,
+    //   });
+    // }
+  };
+  const handleNameChangeLang = (lang, value, attr) => {
+    setFormData((prev) => ({
+      ...prev,
+      [attr]: {
+        ...prev[attr],
+        [lang]: value,
+      },
+    }));
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -119,6 +172,37 @@ const AddServiceModal = ({ isOpen, onClose, refreshData }) => {
             value={formData.order}
             onChange={(e) => handleInputChange("order", e.target.value)}
             className={styles.textareaField}
+          />
+
+          {/* Tag Management Section */}
+          <div className={styles.sectionTitle}>Tag Management</div>
+
+          {languageKeys.map((lang) => (
+            <Input
+              key={lang}
+              label={`Tag Name (${lang.toUpperCase()})`}
+              placeholder={`Enter tag name in ${lang.toUpperCase()}`}
+              labelPlacement="outside"
+              // fullWidth
+              variant="bordered"
+              value={(formData.tag_name && formData.tag_name[lang]) || ""} // Fallback to empty string
+              onChange={(e) =>
+                handleNameChangeLang(lang, e.target.value, "tag_name")
+              }
+              className={styles.inputField}
+            />
+          ))}
+
+          <Input
+            label="Tag Color"
+            placeholder="Enter tag color hex code"
+            fullWidth
+            labelPlacement="outside"
+            variant="bordered"
+            type="color"
+            value={formData.tag_color}
+            onChange={(e) => handleInputChange("tag_color", e.target.value)}
+            className={styles.inputField}
           />
 
           {/* Image Upload Section */}

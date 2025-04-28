@@ -26,8 +26,8 @@ import { phoneCode } from "@/data/data";
 
 const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
   const [formData, setFormData] = useState({
-    // name: {},
-    name: "",
+    name: {},
+    // name: "",
     visible: false,
     link_url: "",
     picture: null,
@@ -46,6 +46,15 @@ const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
       [att]: value,
     }));
   };
+  const handleNameChangeLang = (lang, value, attr) => {
+    setFormData((prev) => ({
+      ...prev,
+      [attr]: {
+        ...prev[attr],
+        [lang]: value,
+      },
+    }));
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -53,8 +62,12 @@ const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
 
   const handleSubmit = async () => {
     const data = new FormData();
+    // data.append("name","test");
 
-    data.append("name", formData.name);
+    Object.entries(formData.name).forEach(([lang, value]) => {
+      data.append(`name[${lang}]`, value);
+    });
+    
     data.append("visible", formData.visible ? "1" : "0");
     data.append("link_url", formData.link_url);
 
@@ -70,9 +83,11 @@ const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
       const response = await postData("/admin/free-services", data);
       if (response.success) {
         toast.success(response.message);
+
         refreshData();
+
         setFormData({
-          name: "",
+          name: {},
           visible: false,
           link_url: "",
           picture: null,
@@ -112,8 +127,22 @@ const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
         <ModalBody>
           {/* Name Fields for Each Language */}
           {/* {languageKeys.map((lang) => ( */}
-
-          <Input
+          {languageKeys.map((lang) => (
+            <Input
+              key={lang}
+              label={`Name (${lang.toUpperCase()})`}
+              placeholder={`Enter name in ${lang.toUpperCase()}`}
+              labelPlacement="outside"
+              // fullWidth
+              variant="bordered"
+              value={(formData.name && formData.name[lang]) || ""} // Fallback to empty string
+              onChange={(e) =>
+                handleNameChangeLang(lang, e.target.value, "name")
+              }
+              className={styles.inputField}
+            />
+          ))}
+          {/* <Input
             label={`Name`}
             placeholder={`Enter Name`}
             labelPlacement="outside"
@@ -123,7 +152,7 @@ const AddFreeServiceModal = ({ isOpen, onClose, refreshData }) => {
             value={formData.name || ""}
             onChange={(e) => handleNameChange("name", e.target.value)}
             className={styles.inputField}
-          />
+          /> */}
           <Input
             label={`Link Url`}
             placeholder={`Link Url`}

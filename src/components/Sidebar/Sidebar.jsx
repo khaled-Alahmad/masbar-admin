@@ -45,7 +45,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       link: "/companies",
       icon: <MdOutlineWork />,
     },
-    { name: "Free Services", link: "/free-services", icon: <FaExchangeAlt /> },
+    { name: "Emergency services", link: "/free-services", icon: <FaExchangeAlt /> },
     {
       name: "Invoices",
       link: "/invoices",

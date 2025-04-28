@@ -24,7 +24,7 @@ import { phoneCode, statusClients } from "@/data/data";
 
 const EditFreeServiceModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    name: {},
     visible: false,
     link_url: "",
     picture: null,
@@ -39,7 +39,7 @@ const EditFreeServiceModal = ({ isOpen, onClose, itemId, refreshData }) => {
         if (response.success) {
           const service = response.data;
           setFormData({
-            name: service.name,
+            name: service.new_name,
             visible: service.visible,
             link_url: service.link_url,
             picture: null,
@@ -66,6 +66,15 @@ const EditFreeServiceModal = ({ isOpen, onClose, itemId, refreshData }) => {
       [field]: value,
     }));
   };
+  const handleNameChangeLang = (lang, value, attr) => {
+    setFormData((prev) => ({
+      ...prev,
+      [attr]: {
+        ...prev[attr],
+        [lang]: value,
+      },
+    }));
+  };
 
   // Handle Main Image Upload
   const handleMainImageUpload = (event) => {
@@ -83,7 +92,9 @@ const EditFreeServiceModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const handleSubmit = async () => {
     const data = new FormData();
 
-    data.append("name", formData.name);
+    Object.entries(formData.name).forEach(([lang, value]) => {
+      data.append(`name[${lang}]`, value);
+    });
     data.append("visible", formData.visible ? "1" : "0");
     data.append("link_url", formData.link_url);
 
@@ -132,17 +143,21 @@ const EditFreeServiceModal = ({ isOpen, onClose, itemId, refreshData }) => {
           {/* Name Fields for Each Language */}
           {/* {languageKeys.map((lang) => ( */}
 
-          <Input
-            label={`Name`}
-            placeholder={`Enter Name`}
-            labelPlacement="outside"
-            required
-            fullWidth
-            variant="bordered"
-            value={formData.name || ""}
-            onChange={(e) => handleNameChange("name", e.target.value)}
-            className={styles.inputField}
-          />
+          {languageKeys.map((lang) => (
+            <Input
+              key={lang}
+              label={`Name (${lang.toUpperCase()})`}
+              placeholder={`Enter name in ${lang.toUpperCase()}`}
+              labelPlacement="outside"
+              // fullWidth
+              variant="bordered"
+              value={(formData.name && formData.name[lang]) || ""} // Fallback to empty string
+              onChange={(e) =>
+                handleNameChangeLang(lang, e.target.value, "name")
+              }
+              className={styles.inputField}
+            />
+          ))}
           <Input
             label={`Link Url`}
             placeholder={`Link Url`}

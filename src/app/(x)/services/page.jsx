@@ -146,12 +146,13 @@ const ServicesTable = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
-  const columnsForLang = languageKeys.map((lang) => ({
-    header: `Name (${lang.toUpperCase()})`,
-    accessorKey: `name.${lang}`, // Access the specific language field
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        {/* <img
+  const columnsForLang = languageKeys.flatMap((lang) => [
+    {
+      header: `Name (${lang.toUpperCase()})`,
+      accessorKey: `name.${lang}`, // Access the specific language field
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          {/* <img
           src={row.original.main_image}
           alt={row.original.name[lang]}
           style={{
@@ -161,10 +162,30 @@ const ServicesTable = () => {
             objectFit: "cover",
           }}
         /> */}
-        <span>{row.original.name[lang]}</span>
-      </div>
-    ),
-  }));
+          <span>{row.original.name[lang]}</span>
+        </div>
+      ),
+    },
+    {
+      header: `Tag name (${lang.toUpperCase()})`,
+      accessorKey: `tag_name.${lang}`, // Access the specific language field
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <span
+            style={{
+              backgroundColor: row.original.tag_color || 'transparent',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              color: row.original.tag_color ? '#fff' : 'inherit'
+            }}
+          >
+            {row.original.tag_name[lang] || ""}
+          </span>
+        </div>
+      ),
+    }
+
+  ]);
   const columns = [
     {
       header: ({ table }) => (
@@ -217,31 +238,31 @@ const ServicesTable = () => {
       header: "Order",
       accessorKey: "sort",
     },
-    {
-      header: "Date Added",
-      accessorKey: "created_at",
-      cell: ({ getValue }) => {
-        const date = new Date(getValue());
-        const formattedDate = new Intl.DateTimeFormat("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }).format(date);
+    // {
+    //   header: "Date Added",
+    //   accessorKey: "created_at",
+    //   cell: ({ getValue }) => {
+    //     const date = new Date(getValue());
+    //     const formattedDate = new Intl.DateTimeFormat("en-GB", {
+    //       day: "2-digit",
+    //       month: "2-digit",
+    //       year: "numeric",
+    //     }).format(date);
 
-        const formattedTime = new Intl.DateTimeFormat("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }).format(date);
+    //     const formattedTime = new Intl.DateTimeFormat("en-US", {
+    //       hour: "2-digit",
+    //       minute: "2-digit",
+    //       hour12: true,
+    //     }).format(date);
 
-        return (
-          <span>
-            {formattedDate.replace(/\//g, " \\ ")} •{" "}
-            {formattedTime.toLowerCase()}
-          </span>
-        );
-      },
-    },
+    //     return (
+    //       <span>
+    //         {formattedDate.replace(/\//g, " \\ ")} •{" "}
+    //         {formattedTime.toLowerCase()}
+    //       </span>
+    //     );
+    //   },
+    // },
 
     {
       header: "Action",

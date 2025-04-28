@@ -14,7 +14,7 @@ import Select from "react-select";
 
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { deleteData, getData, postData, putData } from "@/utils/apiHelper";
+import { deleteData, getData, patchData, postData, putData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { currentlyLang, languageKeys } from "@/utils/lang";
 import AddAddAttributeModal from "./AddAddAttributeModal";
@@ -34,6 +34,12 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
     order: "",
     picture: null,
     existingPicture: null, // Separate field for the existing image URL
+    tag_name: {
+      en: "",
+      ar: ""
+    },
+    tag_color: "#FF6666",
+    tag_type: "add",
   });
   const [loading, setLoading] = useState(false);
   const [showValuesOpen, setShowValuesOpen] = useState({});
@@ -42,6 +48,24 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
   const [selectedAttribute, setSelectedAttribute] = useState(null);
 
   const [services, setServices] = useState([]);
+  const handleNameChangeLang = (lang, value, attr) => {
+    setFormData((prev) => {
+      const updatedTagName = {
+        ...prev[attr],
+        [lang]: value,
+      };
+
+      // Check if either English or Arabic tag name is empty
+      const isEnglishEmpty = !updatedTagName.en || updatedTagName.en.trim() === '';
+      const isArabicEmpty = !updatedTagName.ar || updatedTagName.ar.trim() === '';
+
+      return {
+        ...prev,
+        [attr]: updatedTagName,
+        tag_type: attr === 'tag_name' ? (isEnglishEmpty || isArabicEmpty ? 'remove' : 'add') : prev.tag_type
+      };
+    });
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -88,6 +112,9 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
             service_attributes: service.service_attributes || [],
             service_attributes_values: service.service_attributes?.values || [],
             existingPicture: service.image || null, // Set existing image URL
+            tag_name: service.tag_name || {},
+            tag_color: service.tag_color || "#FF6666",
+            tag_type: "add",
           });
         }
       } catch (error) {
@@ -148,13 +175,13 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
       service_attributes: prev.service_attributes.map((attr) =>
         attr.id === attributeId
           ? {
-              ...attr,
-              values: attr.values.map((val) =>
-                val.id === valueId
-                  ? { ...val, value: { ...val.value, [lang]: value } }
-                  : val
-              ),
-            }
+            ...attr,
+            values: attr.values.map((val) =>
+              val.id === valueId
+                ? { ...val, value: { ...val.value, [lang]: value } }
+                : val
+            ),
+          }
           : attr
       ),
     }));
@@ -245,9 +272,9 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
         service_attributes: prev.service_attributes.map((attr) =>
           attr.id === attributeId
             ? {
-                ...attr,
-                values: attr.values.filter((val) => val.id !== valueId),
-              }
+              ...attr,
+              values: attr.values.filter((val) => val.id !== valueId),
+            }
             : attr
         ),
       }));
@@ -329,6 +356,23 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
         toast.error("Failed to update service type.");
         return;
       }
+
+      const tagData = {
+        type: formData.tag_type,
+        tag_name: formData.tag_name,
+        tag_color: formData.tag_color
+      };
+
+      const tagResponse = await patchData(`/admin/service-types/${itemId}/update-tag`, tagData);
+      if (tagResponse.success) {
+        // toast.success("Service and tag updated successfully!");
+        refreshData();
+        onClose();
+
+      } else {
+        toast.error("Failed to update service.");
+      }
+
 
       toast.success("Service updated successfully!");
       refreshData();
@@ -491,9 +535,8 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
                   className="border-gray-500 border rounded-lg p-4"
                 >
                   <div
-                    className={`grid grid-cols-${
-                      languageKeys.length + 1
-                    } gap-4 mb-2`}
+                    className={`grid grid-cols-${languageKeys.length + 1
+                      } gap-4 mb-2`}
                   >
                     {languageKeys.map((lang) => (
                       <Input
@@ -537,9 +580,8 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
                         item.values.map((value) => (
                           <div
                             key={value.id}
-                            className={`grid grid-cols-${
-                              languageKeys.length + 1
-                            } gap-4 mb-2`}
+                            className={`grid grid-cols-${languageKeys.length + 1
+                              } gap-4 mb-2`}
                           >
                             {languageKeys.map((lang) => (
                               <Input
@@ -600,6 +642,35 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
           >
             Add Attribute
           </button>
+
+          <div className={styles.sectionTitle}>Tag Management</div>
+
+          {languageKeys.map((lang) => (
+            <Input
+              key={lang}
+              label={`Tag Name (${lang.toUpperCase()})`}
+              placeholder={`Enter tag name in ${lang.toUpperCase()}`}
+              labelPlacement="outside"
+              variant="bordered"
+              value={(formData.tag_name && formData.tag_name[lang]) || ""}
+              onChange={(e) =>
+                handleNameChangeLang(lang, e.target.value, "tag_name")
+              }
+              className={styles.inputField}
+            />
+          ))}
+          <Input
+            label="Tag Color"
+            placeholder="Enter tag color hex code"
+            fullWidth
+            labelPlacement="outside"
+            variant="bordered"
+            type="color"
+            value={formData.tag_color}
+            onChange={(e) => setFormData({ ...formData, tag_color: e.target.value })}
+            className={styles.inputField}
+          />
+
           <div>
             <p>Main Service Photo</p>
             <div className={styles.uploadBox}>

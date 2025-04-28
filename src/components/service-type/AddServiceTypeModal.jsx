@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { FaUpload, FaTrashAlt } from "react-icons/fa";
 import styles from "@/assets/css/components/ServiceCategories.module.css";
-import { getData, postData } from "@/utils/apiHelper";
+import { getData, patchData, postData } from "@/utils/apiHelper";
 import toast from "react-hot-toast";
 import { currentlyLang, languageKeys } from "@/utils/lang";
 
@@ -30,6 +30,12 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
     order: "",
     category_id: null,
     picture: null,
+    tag_name: {
+      en: "",
+      ar: ""
+    },
+    tag_color: "#FF6666",
+    tag_type: "add"
   });
   const [services, setServices] = useState([]);
 
@@ -101,9 +107,20 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
     try {
       const response = await postData("/admin/service-types", data);
       if (response.success) {
-        toast.success("Service added successfully!");
-        refreshData();
-        onClose();
+        const tagData = {
+          type: formData.tag_type,
+          tag_name: formData.tag_name,
+          tag_color: formData.tag_color
+        };
+
+        const tagResponse = await patchData(`/admin/service-types/${response.data.id}/update-tag`, tagData);
+        if (tagResponse.success) {
+          toast.success("Service and tag added successfully!");
+          refreshData();
+          onClose();
+        } else {
+          toast.error("Service created but failed to add tag.");
+        }
       } else {
         toast.error("Failed to add service.");
       }
@@ -115,6 +132,12 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
         name: {},
         order: "",
         picture: null,
+        tag_name: {
+          en: "",
+          ar: ""
+        },
+        tag_color: "#FF6666",
+        tag_type: "add"
       });
     }
   };
@@ -129,7 +152,15 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
       </Modal>
     );
   }
-
+  const handleNameChangeLang = (lang, value, attr) => {
+    setFormData((prev) => ({
+      ...prev,
+      [attr]: {
+        ...prev[attr],
+        [lang]: value,
+      },
+    }));
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -253,6 +284,35 @@ const AddServiceTypeModal = ({ isOpen, onClose, refreshData }) => {
               Maximum image size is 10MB
             </small> */}
           </div>
+          <div className={styles.sectionTitle}>Tag Management</div>
+
+          {languageKeys.map((lang) => (
+            <Input
+              key={lang}
+              label={`Tag Name (${lang.toUpperCase()})`}
+              placeholder={`Enter tag name in ${lang.toUpperCase()}`}
+              labelPlacement="outside"
+              // fullWidth
+              variant="bordered"
+              value={(formData.tag_name && formData.tag_name[lang]) || ""} // Fallback to empty string
+              onChange={(e) =>
+                handleNameChangeLang(lang, e.target.value, "tag_name")
+              }
+              className={styles.inputField}
+            />
+          ))}
+
+          <Input
+            label="Tag Color"
+            placeholder="Enter tag color hex code"
+            fullWidth
+            labelPlacement="outside"
+            variant="bordered"
+            type="color"
+            value={formData.tag_color}
+            onChange={(e) => handleInputChange("tag_color", e.target.value)}
+            className={styles.inputField}
+          />
           <div>
             <p>Service Type Photo</p>
             <div className={styles.uploadBoxTow}>

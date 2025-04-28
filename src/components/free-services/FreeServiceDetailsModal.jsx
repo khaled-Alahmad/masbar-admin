@@ -14,7 +14,7 @@ import {
 import styles from "@/assets/css/components/ServiceRequestDetails.module.css";
 import { getData } from "@/utils/apiHelper";
 import Image from "next/image";
-import { languageKeys } from "@/utils/lang";
+import { currentlyLang, languageKeys } from "@/utils/lang";
 import Link from "next/link";
 
 const FreeServiceDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
@@ -70,7 +70,7 @@ const FreeServiceDetailsModal = ({ isOpen, onClose, itemId, onEdit }) => {
           {/* Details Section */}
           <div className={styles.details}>
             <div className="flex justify-between">
-              <strong>Name:</strong> <span>{services.name}</span>
+              <strong>Name:</strong> <span>{services.new_name[currentlyLang]}</span>
             </div>
             <div className="flex justify-between">
               <strong>Link:</strong>{" "}

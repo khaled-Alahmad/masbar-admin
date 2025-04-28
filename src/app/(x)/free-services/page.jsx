@@ -32,6 +32,7 @@ import AdsDetailsModal from "@/components/ads/AdsDetailsModal";
 import AddFreeServiceModal from "@/components/free-services/AddFreeServiceModal";
 import EditFreeServiceModal from "@/components/free-services/EditFreeServiceModal";
 import FreeServiceDetailsModal from "@/components/free-services/FreeServiceDetailsModal";
+import { languageKeys } from "@/utils/lang";
 
 const FreeServiceTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -199,6 +200,19 @@ const FreeServiceTable = () => {
   const handleRequestShow = (id) => {
     router.push(`/service-requests?id=${id}`);
   };
+
+  const columnsForLang = languageKeys.flatMap((lang) => [
+    {
+      header: `Name (${lang.toUpperCase()})`,
+      accessorKey: `new_name.${lang}`, // Access the specific language field
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <span>{row.original.new_name[lang]}</span>
+        </div>
+      ),
+    },
+  ]);
+
   const columns = [
     {
       header: ({ table }) => (
@@ -229,10 +243,7 @@ const FreeServiceTable = () => {
       ),
     },
 
-    {
-      header: "Name",
-      accessorKey: "name",
-    },
+    ...columnsForLang,
     {
       header: "Image",
       cell: ({ row }) => (
@@ -363,10 +374,12 @@ const FreeServiceTable = () => {
       created_at_to: null,
     });
   };
+  console.log(data);
+
   return (
     <div className={styles.container}>
       <h2>
-        Free Services
+        Emergency services
         {loadingFilter && (
           // <tr>
           //   <td colSpan={7}>

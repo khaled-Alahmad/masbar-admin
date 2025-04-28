@@ -87,7 +87,7 @@ export const putData = async (endpoint, body = {}) => {
 // PATCH Request
 export const patchData = async (endpoint, body = {}) => {
     try {
-        const response = await API.patch(endpoint, body);
+        const response = await API.put(endpoint, body);
         return response.data;
     } catch (error) {
         handleApiError(error);

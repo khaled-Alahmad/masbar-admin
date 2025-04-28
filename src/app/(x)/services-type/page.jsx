@@ -188,6 +188,24 @@ const ServicesTypeTable = () => {
         </div>
       ),
     },
+    {
+      header: `Tag name (${lang.toUpperCase()})`,
+      accessorKey: `tag_name.${lang}`, // Access the specific language field
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <span
+            style={{
+              backgroundColor: row.original.tag_color || 'transparent',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              color: row.original.tag_color ? '#fff' : 'inherit'
+            }}
+          >
+            {row.original.tag_name[lang] || ""}
+          </span>
+        </div>
+      ),
+    }
   ]);
 
   const columns = [
@@ -246,7 +264,7 @@ const ServicesTypeTable = () => {
           size="sm"
           color="primary"
           isSelected={row.original.online_meeting} // Individual row selection
-          // onChange={() => toggleRowSelection(row.original.id)}
+        // onChange={() => toggleRowSelection(row.original.id)}
         />
       ),
     },
