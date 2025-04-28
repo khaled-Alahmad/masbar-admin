@@ -301,6 +301,30 @@ const ProvidersTable = () => {
       },
     },
     {
+      header: "Role",
+      cell: ({ row }) => {
+        const roleName = row.original?.role;
+        const companyName = roleName == "owner"
+          ? row.original.owner_company.name
+          : roleName == "employee"
+            ? row.original.company.name
+            : null;
+
+        return (
+          <div className={styles.container3}>
+            <span className={styles.roleName}>
+              {roleName}
+            </span>
+            {companyName && (
+              <span className={styles.companyName}>
+                {companyName}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       header: "Status",
       accessorKey: "user.status",
       cell: ({ row }) => {

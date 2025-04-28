@@ -5,10 +5,47 @@
 }
 
 .header {
-  display: flex; /* Flexbox for header */
-  justify-content: space-between; /* Space between items */
-  align-items: center; /* Center items vertically */
+  display: flex;
+  /* Flexbox for header */
+  justify-content: space-between;
+  /* Space between items */
+  align-items: center;
+  /* Center items vertically */
   margin-bottom: 1rem;
+}
+
+
+.container3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  gap: 0.125rem;
+}
+
+.roleName {
+  font-weight: 300;
+  text-transform: capitalize;
+  color: #111827;
+}
+
+.companyName {
+  font-size: 0.75rem;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+/* For dark mode support, you would need to add a class or data attribute to a parent element */
+:global([data-theme="dark"]) .roleName {
+  color: #f9fafb;
+}
+
+:global([data-theme="dark"]) .companyName {
+  color: #9ca3af;
 }
 
 .container h2 {
@@ -33,9 +70,11 @@
   display: flex;
   gap: 1rem;
 }
+
 .paginationBtn {
   background-color: transparent !important;
 }
+
 .addButton {
   display: flex;
   align-items: center;
@@ -53,6 +92,7 @@
   line-height: normal;
   border: none;
 }
+
 .exportButton {
   /* Auto layout */
   display: flex;
@@ -84,29 +124,37 @@
 .tableContainer {
   position: relative;
 
-  width: 100%; /* Full width */
+  width: 100%;
+  /* Full width */
   /* height: 80vh; */
   /* max-height: 500px; Limit height for vertical scrolling */
-  overflow: auto; /* لتمكين التمرير عند الحاجة */
+  overflow: auto;
+  /* لتمكين التمرير عند الحاجة */
 }
 
 /* تثبيت العمود الأخير مع خلفية ثابتة */
 .table td:last-child,
 .table th:last-child {
-  position: sticky; /* تثبيت العمود الأخير */
-  right: 0; /* إبقائه على الطرف الأيمن */
+  position: sticky;
+  /* تثبيت العمود الأخير */
+  right: 0;
+  /* إبقائه على الطرف الأيمن */
   /* background-color: #fff; لون الخلفية لضمان رؤية النص */
-  z-index: 10; /* ضمان ظهوره فوق بقية العناصر */
+  z-index: 10;
+  /* ضمان ظهوره فوق بقية العناصر */
   text-align: center;
 }
 
 /* صفوف زوجية (للتأكد من التباين) */
 
 .table {
-  width: 100%; /* Full width */
-  border-collapse: collapse; /* Collapse borders */
+  width: 100%;
+  /* Full width */
+  border-collapse: collapse;
+  /* Collapse borders */
   /* min-height: 70vh; */
 }
+
 .table th,
 .table td {
   text-align: left;
@@ -114,7 +162,8 @@
   color: #333;
   font-weight: 400;
   border-bottom: 1px solid #eee;
-  white-space: nowrap; /* Prevent text wrapping */
+  white-space: nowrap;
+  /* Prevent text wrapping */
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
@@ -127,10 +176,12 @@
   font-weight: 600;
   border-bottom: 1px solid #ddd;
 }
+
 .table tr {
   background: #fff;
   /* height: 1rem !important; */
 }
+
 .table tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
@@ -147,11 +198,13 @@
   background-color: #ffffff;
   border-radius: 40px;
   justify-content: space-evenly;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف حول العنصر */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  /* ظل خفيف حول العنصر */
 
   /* gap: 1rem; */
   /* width: 150px; */
 }
+
 .icon {
   cursor: pointer;
   color: var(--icon-color);
@@ -161,6 +214,7 @@
 .icon:hover {
   color: var(--primary-color);
 }
+
 /* Pagination Container */
 .pagination {
   display: flex;
@@ -194,6 +248,7 @@
   background-color: var(--primary-color);
   color: #ffffff;
 }
+
 .pendingStatus {
   color: var(--Colors-Orange, var(--Colors-Orange, #ff9500));
   text-align: right;
@@ -213,6 +268,7 @@
   border-radius: 0.25rem;
   background: rgba(255, 152, 8, 0.08);
 }
+
 .acceptedStatus {
   color: #00aeef;
   text-align: right;
@@ -232,6 +288,7 @@
   align-items: center;
   gap: 0.625rem;
 }
+
 .canceledStatus {
   color: #ff3b30;
   text-align: right;
@@ -251,6 +308,7 @@
   border-radius: 0.25rem;
   background: rgba(255, 59, 48, 0.08);
 }
+
 /* Active Page Number */
 .pagination .activePage {
   background-color: var(--primary-color);
@@ -273,14 +331,17 @@
   .table {
     min-height: 30vh;
   }
+
   .filters {
     flex-direction: column;
     gap: 0.75rem;
   }
+
   .header {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .buttons {
     margin-top: 1rem;
     flex-direction: column;
