@@ -79,8 +79,8 @@ const ServicesRequestDaysTable = () => {
     client_id: id || null,
     search: "",
     sort_order: "asc", // true for ascending, false for descending
-    created_at_from: new Date().toISOString().split('T')[0],
-    created_at_to: new Date().toISOString().split('T')[0]
+    created_at_from: new Date().toISOString().split("T")[0],
+    created_at_to: new Date().toISOString().split("T")[0],
   });
 
   const handleDetailsClick = (id) => {
@@ -229,14 +229,14 @@ const ServicesRequestDaysTable = () => {
         const status = row.original.status;
         return (
           <>
-            {status === "ACCEPTED" ? (
+            {status === "COMPLETED" ? (
               <>
                 {" "}
                 <span className={"bg-orange-500 text-white rounded-lg p-1"}>
                   {status.toLowerCase()}
                 </span>
               </>
-            ) : status === "SEARCHING" ? (
+            ) : status === "ARRIVED" ? (
               <>
                 {" "}
                 <span className={"bg-sky-500 text-white rounded-lg p-1"}>
@@ -346,6 +346,7 @@ const ServicesRequestDaysTable = () => {
       ),
     },
   ];
+  // console.log(data);
 
   const table = useReactTable({
     data,
@@ -391,8 +392,8 @@ const ServicesRequestDaysTable = () => {
       currentDate.setDate(currentDate.getDate() + 1);
       return {
         ...prevFilters,
-        created_at_from: currentDate.toISOString().split('T')[0],
-        created_at_to: currentDate.toISOString().split('T')[0]
+        created_at_from: currentDate.toISOString().split("T")[0],
+        created_at_to: currentDate.toISOString().split("T")[0],
       };
     });
   };
@@ -403,8 +404,8 @@ const ServicesRequestDaysTable = () => {
       currentDate.setDate(currentDate.getDate() - 1);
       return {
         ...prevFilters,
-        created_at_from: currentDate.toISOString().split('T')[0],
-        created_at_to: currentDate.toISOString().split('T')[0]
+        created_at_from: currentDate.toISOString().split("T")[0],
+        created_at_to: currentDate.toISOString().split("T")[0],
       };
     });
   };
@@ -484,11 +485,15 @@ const ServicesRequestDaysTable = () => {
           </Button> */}
         </div>
 
-        <div className={`${styles.buttons} justify-center flex items-center align-middle` }>
+        <div
+          className={`${styles.buttons} justify-center flex items-center align-middle`}
+        >
           <Button color="primary" onPress={decrementDate}>
             -
           </Button>
-          <span>{new Date(filters.created_at_from).toISOString().split("T")[0]}</span>{" "}
+          <span>
+            {new Date(filters.created_at_from).toISOString().split("T")[0]}
+          </span>{" "}
           {/* Display Date */}
           <Button onPress={incrementDate} color="primary">
             +
