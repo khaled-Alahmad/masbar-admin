@@ -125,20 +125,40 @@ const ServicesTypeTable = () => {
       : updatedSelection.add(id);
     setSelectedRows(updatedSelection);
   };
-  const handleEdit = async (rowData) => {
+  const handleEdit = async (rowData, status) => {
     try {
       // Toggle the is_active value
-      const updatedActiveStatus = !rowData.is_active;
+      // const updatedActiveStatus = !rowData.is_active;
+      // const online_meeting = !rowData.online_meeting;
+      let updatedIsActive, updatedOnlineMeeting;
+      if (status === "is_active") {
+        updatedIsActive = !rowData.is_active;
+      } else if (status === "online_meeting") {
+        updatedOnlineMeeting = !rowData.online_meeting;
+      }
+      // If online is true, set the online_meeting value to true
+
+      // const online_meeting = !rowData.online_meeting;
 
       // Update the data on the server
       const response = await putData(`/admin/service-types/${rowData.id}`, {
-        ...rowData,
-        is_active: updatedActiveStatus,
+        // ...rowData,
+        is_active: updatedIsActive,
+        online_meeting: updatedOnlineMeeting,
       });
 
       // Show success message if API call is successful
       if (response.success) {
         toast.success(response.data.message || "Status updated successfully!");
+        // Update the local state to reflect the change
+        // setData((prevData) =>
+        //   prevData.map((item) =>
+        //     item.id === rowData.id
+        //       ? { ...item, is_active: updatedActiveStatus }
+        //       : item
+        //   )
+        // );
+        fetchServices(); // Refresh the data
         // Optionally, refresh the data or update the local state here
       } else {
         toast.error("Failed to update status.");
@@ -195,17 +215,17 @@ const ServicesTypeTable = () => {
         <div className="flex items-center">
           <span
             style={{
-              backgroundColor: row.original.tag_color || 'transparent',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              color: row.original.tag_color ? '#fff' : 'inherit'
+              backgroundColor: row.original.tag_color || "transparent",
+              padding: "2px 8px",
+              borderRadius: "4px",
+              color: row.original.tag_color ? "#fff" : "inherit",
             }}
           >
             {row.original.tag_name[lang] || ""}
           </span>
         </div>
       ),
-    }
+    },
   ]);
 
   const columns = [
@@ -264,7 +284,7 @@ const ServicesTypeTable = () => {
           size="sm"
           color="primary"
           isSelected={row.original.online_meeting} // Individual row selection
-        // onChange={() => toggleRowSelection(row.original.id)}
+          onChange={() => handleEdit(row.original, "online_meeting")} // Pass the entire row's original data
         />
       ),
     },
@@ -302,7 +322,7 @@ const ServicesTypeTable = () => {
           size="sm"
           color="primary"
           isSelected={row.original.is_active} // Individual row selection
-          onChange={() => handleEdit(row.original)} // Pass the entire row's original data
+          onChange={() => handleEdit(row.original, "is_active")} // Pass the entire row's original data
         />
       ),
     },
