@@ -356,21 +356,22 @@ const EditServiceTypeModal = ({ isOpen, onClose, itemId, refreshData }) => {
         toast.error("Failed to update service type.");
         return;
       }
-      if ((formData.tag_name.en?.trim() || "") || (formData.tag_name.ar?.trim() || "")) {
-        const tagData = {
-          type: formData.tag_type,
-          tag_name: formData.tag_name,
-          tag_color: formData.tag_color
-        };
+      const tagData = {
+        type: formData.tag_type,
+        tag_name: {
+          en: formData.tag_name.en?.trim() || null,
+          ar: formData.tag_name.ar?.trim() || null
+        },
+        tag_color: formData.tag_color
+      };
 
-        const tagResponse = await patchData(`/admin/service-types/${itemId}/update-tag`, tagData);
-        if (tagResponse.success) {
-          // toast.success("Service and tag updated successfully!");
-          refreshData();
-          onClose();
-        } else {
-          toast.error("Failed to update service.");
-        }
+      const tagResponse = await patchData(`/admin/service-types/${itemId}/update-tag`, tagData);
+      if (tagResponse.success) {
+        // toast.success("Service and tag updated successfully!");
+        refreshData();
+        onClose();
+      } else {
+        toast.error("Failed to update service.");
       }
 
 
